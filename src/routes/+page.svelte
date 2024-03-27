@@ -28,14 +28,6 @@
 }
 
 
-.search-bar {
-  width: calc(100% - 32px); /* Adjusted to account for padding */
-  margin: 16px;
-  box-sizing: border-box;
-  border: 2px solid #0066cc;
-  
-}
-
 @media (max-width: 768px) { /* Mobile view media query */
     .app-container {
       width: 100%;
@@ -86,8 +78,6 @@
 </style>
 
 <div class="app-container">
-
-<input class="search-bar" type="text" placeholder="SEARCH BAR..."/>
 
 <div class="middle-buttons">
   <button class="button" on:click={() => handleButtonClick('Patients')}>PATIENTS</button>
