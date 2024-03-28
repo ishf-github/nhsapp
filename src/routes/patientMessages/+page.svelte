@@ -1,62 +1,38 @@
 <script>
-    import Button from "../../components/Button.svelte";
     import { goto } from '$app/navigation';
 
-    // Mock data for the patient's summary
     let patientSummary = {
       name: 'NAME SURNAME',
       dob: '01/01/1991',
       nextAppt: '01/01/2025'
     };
   
-    // Mock data for messages
     let messages = [
-    // Sample message structure
-    { content: 'Hello there!', sender: 'patient', timestamp: 'Yesterday' },
-    { content: 'How can I help you today?', sender: 'provider', timestamp: 'Today' },
-    // More messages...
-  ];
+      { content: 'Hello there!', sender: 'patient', timestamp: 'Yesterday' },
+      { content: 'How can I help you today?', sender: 'provider', timestamp: 'Today' },
+      // More messages...
+    ];
 
-  let newMessageContent = '';
+    let newMessageContent = '';
+    let messageList = null; // Initialize messageList as null
 
-  function sendMessage() {
-    if (newMessageContent.trim() === '') return;
+    function sendMessage() {
+        if (newMessageContent.trim() === '') return;
 
-    const newMessage = {
-      content: newMessageContent,
-      sender: 'provider', // Assuming the logged-in user is the provider
-      timestamp: 'Now' // You would put a real timestamp here
-    };
+        const newMessage = {
+            content: newMessageContent,
+            sender: 'provider',
+            timestamp: new Date().toLocaleTimeString() // Real timestamp
+        };
     
-    messages = [...messages, newMessage];
-    newMessageContent = ''; // Clear the message input after sending
-  }
-  
-  let messageList; // We'll use this to reference the messages container for auto-scrolling
+        messages = [...messages, newMessage];
+        newMessageContent = '';
 
-  function sendMessage() {
-    if (newMessageContent.trim() === '') return;
-
-    const newMessage = {
-      content: newMessageContent,
-      sender: 'provider',
-      timestamp: new Date().toLocaleTimeString() // To give a real-time timestamp
-    };
-    
-    messages = [...messages, newMessage];
-    newMessageContent = '';
-
-    // Scroll to the bottom of the messages container
-    messageList.scrollTo(0, messageList.scrollHeight);
-  }
-
-  // After the component updates, we ensure the scroll is at the bottom
-  // for the case of the first render or when receiving new messages
-  $: {
-    if (messageList) {
-      messageList.scrollTo(0, messageList.scrollHeight);
+        if (messageList) {
+            messageList.scrollTo(0, messageList.scrollHeight); // Scroll to bottom
+        }
     }
-  }
+  
 
 
     function viewPatientRecord() {
@@ -92,9 +68,10 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    max-height: 300px; 
-    /* Additional styles... */
-    }
+    max-height: 300px;
+    padding-bottom: 100px; /* Add space for the message input */
+    /* ... */
+  }
   
 
     .message {
@@ -114,15 +91,21 @@
     background-color: #d1d1d1; /* Different background for received messages */
   }
 
-    .message-input {
-        position: fixed; /* Fix the input area to the bottom of the viewport */
+  .message-input {
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: white; /* Match your design background */
+    background: white;
     padding: 8px;
-    }
+    z-index: 2; /* Ensure it's above other content */
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a shadow to the top of the message input for better separation */
+  }
   
+  .patient-messages-page {
+    padding-bottom: 70px; /* Height of your message input box + some extra space */
+  }
+
     .round-button {
       /* Styles for round button */
     }
