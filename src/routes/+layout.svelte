@@ -1,12 +1,10 @@
 <!-- layout.svelte -->
 <script>
-    // Import statements if you have any components for logo, buttons, etc.
-
-    function handleButtonClick(button) {
+  function handleButtonClick(button) { // If using JavaScript, type definition is not needed
     console.log(`${button} clicked`);
-    }
-    
+  }
 </script>
+
 
 <style>
   header {
@@ -56,7 +54,12 @@
   nav {
     display: flex;
     justify-content: space-around;
-    padding: 16px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    z-index: 20; /* Ensure it's above the content but below floating buttons */
   }
 
   .icon-button {
@@ -69,8 +72,12 @@
   }
 
   .nav-icon {
-    width: 48px;
-    height: 48px;
+    width: 48px; /* Adjust size for a square button */
+    height: 48px; /* Same as width for square */
+    flex-grow: 1; /* This will make all buttons grow to fill the nav equally */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   @media (max-width: 768px) {
