@@ -34,46 +34,68 @@
     /* Reuse the styles from layout.svelte */
   
     .patient-container {
-      background-color: #fff;
-      margin: 16px;
-      padding: 16px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-    }
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
   
-    .patient-info {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+  .patient-info {
+    flex-grow: 1;
+  }
   
-    .patient-actions {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+  .patient-details {
+    margin-bottom: 8px;
+  }
+
+  .patient-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
   
+  .cta-button {
+    padding: 6px 12px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  .messages {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .message {
+    background-color: #d1d1d1;
+    margin: 8px;
+    padding: 8px;
+  }
+
     .button {
       margin-top: 8px; /* Adds spacing between buttons */
     }
   
-    .round-button {
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      font-size: 24px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      border: none;
-    }
+    .icon-round {
+    position: fixed;
+    bottom: 64px; /* Distance from bottom, adjust as needed */
+    right: 20px; /* Distance from right, adjust as needed */
+    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    background-color: #fff; /* Or any desired background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
   
     /* Add more styles as needed */
   </style>
@@ -98,6 +120,6 @@
         </div>
     {/each}
   
-    <button class="round-button" on:click={() => handleAction('Notes', {})}>!</button>
+    <button class="icon-button icon-round" on:click={() => handleAction('notes')}>NOTES</button>
 
 </div>

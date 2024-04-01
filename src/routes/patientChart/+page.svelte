@@ -58,7 +58,40 @@
 </script>
 
 <style>
-    /* Your CSS styles here */
+    .icon-round {
+    position: fixed;
+    bottom: 64px; /* Distance from bottom, adjust as needed */
+    right: 20px; /* Distance from right, adjust as needed */
+    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    background-color: #fff; /* Or any desired background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  .messages-round {
+    position: fixed;
+    bottom: 64px; /* Distance from bottom, adjust as needed */
+    right: 96px; /* Distance from right, adjust as needed */
+    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    background-color: #808080; /* Or any desired background color */
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
 </style>
 
 <div class="patient-chart-page">
@@ -122,8 +155,8 @@
 
     <!-- Footer with round CTA buttons -->
     <footer>
-        <button class="round-button" on:click={viewMessages}>MESSAGES</button>
-        <button class="round-button" on:click={() => {}}>NOTES</button>
+        <button class="icon-button messages-round" on:click={() => navigateTo('messages')}>MESSAGE</button>
+        <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
         <!-- Include other footer content or navigation buttons -->
     </footer>
 </div>

@@ -7,8 +7,13 @@
       case 'Patients':
         goto('/patients');
         break;
-      // Add cases for other actions if necessary
-      // ...
+      case 'Appointments':
+        goto('/patientAppointments');
+        break;
+      case 'Messages':
+        goto('/messageList');
+        break;
+
     }
   }
 </script>

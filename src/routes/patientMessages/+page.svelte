@@ -1,5 +1,19 @@
 <script>
+    import Button from "../../components/Button.svelte";
     import { goto } from '$app/navigation';
+
+    const handleClick = () => {
+      alert("Button clicked");
+  };
+
+  function navigateTo(page) {
+  if (page === 'patients') {
+    goto('/patients');
+  } else if (page === 'notes') {
+    goto('/notes'); // Ensure this is the correct route
+  }
+  // Add more cases as needed
+}
 
     let patientSummary = {
       name: 'NAME SURNAME',
@@ -12,109 +26,124 @@
       { content: 'How can I help you today?', sender: 'provider', timestamp: 'Today' },
       // More messages...
     ];
-
+  
     let newMessageContent = '';
-    let messageList = null; // Initialize messageList as null
-
+  
     function sendMessage() {
-        if (newMessageContent.trim() === '') return;
-
-        const newMessage = {
-            content: newMessageContent,
-            sender: 'provider',
-            timestamp: new Date().toLocaleTimeString() // Real timestamp
-        };
-    
-        messages = [...messages, newMessage];
-        newMessageContent = '';
-
-        if (messageList) {
-            messageList.scrollTo(0, messageList.scrollHeight); // Scroll to bottom
-        }
+      if (newMessageContent.trim() === '') return;
+  
+      const newMessage = {
+        content: newMessageContent,
+        sender: 'provider',
+        timestamp: new Date().toLocaleTimeString()
+      };
+  
+      messages = [...messages, newMessage];
+      newMessageContent = '';
     }
   
-
-
     function viewPatientRecord() {
       // Navigate to the patient record
-    }
-  
-    function searchMessages() {
-      // Implement search logic
-    }
-  
-    function attachFile() {
-      // Implement file attachment logic
+      goto('/patientRecord'); // Update this to your actual route
     }
   
     function viewNotes() {
       // Navigate to the notes page
+      goto('/notes'); // Update this to your actual route
     }
   </script>
   
   <style>
-    /* Your CSS styles here */
-  
-    /* For example: */
     .patient-summary {
-      /* Styles for the patient summary section */
-    }
-  
-    .search-bar {
-      /* Styles for the search bar */
+      padding: 16px;
+      background-color: #f8f8f8;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
     }
   
     .messages {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    max-height: 300px;
-    padding-bottom: 100px; /* Add space for the message input */
-    /* ... */
-  }
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 300px; 
+      margin-top: 16px;
+      margin-bottom: 0px;
+    }
   
-
     .message {
-    max-width: 80%;
-    margin: 8px;
-    padding: 8px;
-    /* Add more styles for message */
-  }
+      max-width: 80%;
+      margin: 8px;
+      padding: 8px;
+      background-color: #ececec;
+      border-radius: 4px;
+    }
   
-  .message.provider {
-    align-self: flex-end;
-    background-color: #ececec; /* Different background for sent messages */
-  }
-
-  .message.patient {
-    align-self: flex-start;
-    background-color: #d1d1d1; /* Different background for received messages */
-  }
-
-  .message-input {
+    .message.provider {
+      align-self: flex-end;
+      background-color: #d1d1d1;
+    }
+  
+    .message.patient {
+      align-self: flex-start;
+    }
+  
+    .message-input {
     position: fixed;
-    bottom: 0;
+    bottom: 70px; /* Adjust this value to the height of your nav bar */
     left: 0;
     right: 0;
-    background: white;
     padding: 8px;
-    z-index: 2; /* Ensure it's above other content */
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds a shadow to the top of the message input for better separation */
+    background: white;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Make sure this is less than the z-index of your nav bar so it doesn't overlap */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   
-  .patient-messages-page {
-    padding-bottom: 70px; /* Height of your message input box + some extra space */
+  .message-input textarea {
+    flex-grow: 1;
+    margin-right: 8px; /* Spacing between textarea and buttons */
   }
 
-    .round-button {
-      /* Styles for round button */
+  .message-input button {
+    width: 48x; /* Making the button square */
+    height: 48px; /* Making the button square */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px; /* Adjust size for the paperclip icon if necessary */
+    background-color: #f0f0f0; /* Your button background color */
+    border: none;
+    cursor: pointer;
+  }
+
+    .patient-messages-page {
+      margin-bottom: 70px; /* Adjusted for fixed nav bar height */
     }
   
-    .attach-button {
-      /* Styles for attach file button */
-    }
+    .icon-round {
+    position: fixed;
+    bottom: 64px; /* Distance from bottom, adjust as needed */
+    right: 20px; /* Distance from right, adjust as needed */
+    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    background-color: #fff; /* Or any desired background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
 
-    /* You'll need to flesh out these styles to match the design */
+  .attach-button {
+    font-family: 'Font Awesome 5 Free'; /* Using Font Awesome for the paperclip icon */
+    font-weight: 900; /* Font Awesome specific font-weight for solid icons */
+  }
+
   </style>
   
   <div class="patient-messages-page">
@@ -124,32 +153,27 @@
       <p>Next Appt: {patientSummary.nextAppt}</p>
       <button on:click={viewPatientRecord}>VIEW RECORD</button>
     </div>
-    
-    <input class="search-bar" type="text" placeholder="SEARCH MESSAGES..." on:input={searchMessages}>
   
-     <!-- Messages display -->
-     <div class="messages" bind:this={messageList}>
-        {#each messages as message (message.timestamp)}
-          <div class="message {message.sender}">
-            {message.content}
-            <span>{message.timestamp}</span>
-          </div>
-        {/each}
+    <!-- Messages display -->
+    <div class="messages">
+      {#each messages as message (message.timestamp)}
+        <div class="message {message.sender}">
+          {message.content}
+          <span>{message.timestamp}</span>
+        </div>
+      {/each}
+    </div>
+  
+    <!-- Message input -->
+    <div class="message-input">
+        <textarea bind:value={newMessageContent} placeholder="Type your message here..."></textarea>
+        <button class="attach-button" on:click={attachFile}>
+          &#x1F4CE; <!-- This is the Unicode for paperclip, you can replace it with an icon from a library like Font Awesome -->
+        </button>
+        <button on:click={sendMessage}>SEND</button>
       </div>
   
-
-
-    <!-- Message input -->
-  <div class="message-input">
-    <textarea bind:value={newMessageContent} placeholder="Type your message here..."></textarea>
-    <button on:click={sendMessage}>SEND</button>
+    <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
   </div>
   
-    <button class="round-button" on:click={viewNotes}>NOTES</button>
-  </div>
-  
-  <!-- You can add the footer with navigation buttons as per your design -->
-  <footer>
-    <!-- Navigation buttons here -->
-  </footer>
   

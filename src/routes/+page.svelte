@@ -10,8 +10,18 @@
 
   // Remove the TypeScript types to use plain JavaScript
   function navigateTo(page) {
-  if (page === 'patients') {
-    goto('/patients'); // Navigate to the patients route
+    if (page === 'patients') {
+    goto('/patients');
+  } else if (page === 'appointments') {
+    goto('/patientAppointments'); // Ensure this is the correct route
+  } else if (page === 'messages') {
+    goto('/messageList');
+  } else if (page === 'prescriptions') {
+    goto('/prescriptions');
+  } else if (page === 'referrals') {
+    goto('/referrals');
+  } else if (page === 'tasks') {
+    goto('/tasks');
   }
 }
 </script>
