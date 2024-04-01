@@ -1,7 +1,15 @@
 <!-- layout.svelte -->
 <script>
-  function handleButtonClick(button) { // If using JavaScript, type definition is not needed
-    console.log(`${button} clicked`);
+  import { goto } from '$app/navigation';
+
+  function handleButtonClick(action) {
+    switch(action) {
+      case 'Patients':
+        goto('/patients');
+        break;
+      // Add cases for other actions if necessary
+      // ...
+    }
   }
 </script>
 
@@ -15,7 +23,7 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: white; /* Or any color fitting your design */
+    background-color:#005EB8;
     z-index: 100; /* Ensures the header is above other content */
   }
 
@@ -26,8 +34,9 @@
   
   .search-bar-container {
     width: 100%;
-    padding: 16px;
-    padding-top: 60px; /* Height of the header */
+    padding-left: 0px;
+    padding-right:0px;
+    padding-top: 16px; /* Height of the header */
     box-sizing: border-box;
     position: fixed;
     top: 60px; /* Place it right below the header */
@@ -45,10 +54,11 @@
     }
 
   .search-bar {
+    height: 48px;
     width: 100%; /* Full width */
     margin: 0 auto; /* Center the search bar if needed */
     box-sizing: border-box; /* Include padding in the width */
-    border: 2px solid #0066cc;
+    border: 2px solid #005EB8;
   }
 
   nav {
@@ -65,10 +75,16 @@
   .icon-button {
     width: 48px;
     height: 48px;
+    background-color: #005EB8;
+    color: white;
+    border: 0;
+    font-size: 24px;
   }
 
   .logo {
-    /* Styling for the logo */
+    justify-content: center;
+    text-align: center;
+    padding-top: 5%;
   }
 
   .nav-icon {
@@ -78,6 +94,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
+    font-weight: bold;
+    background-color: #005EB8;
+    border-color: #0072CE
   }
 
   @media (max-width: 768px) {
@@ -117,7 +137,7 @@
 
 <nav>
     <button class="nav-icon" on:click={() => handleButtonClick('Patients')}>PATIENTS</button>
-    <button class="nav-icon" on:click={() => handleButtonClick('Appointments')}>APPOINTMENTS</button>
+    <button class="nav-icon" on:click={() => handleButtonClick('Appointments')}>APPTS</button>
     <button class="nav-icon" on:click={() => handleButtonClick('Messages')}>MESSAGES</button>
-    <button class="nav-icon" on:click={() => handleButtonClick('Alerts')}>!</button>
+    <button class="nav-icon" on:click={() => handleButtonClick('Tasks')}>TASKS</button>
 </nav>

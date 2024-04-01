@@ -1,3 +1,5 @@
+<!-- src/routes/+page.svelte -->
+
 <script>
   import Button from "../components/Button.svelte";
   import { goto } from '$app/navigation';
@@ -7,18 +9,18 @@
   };
 
   // Remove the TypeScript types to use plain JavaScript
-  function handleButtonClick(button) {
-    if (button === 'Patients') {
-      goto('/patients'); // Navigate to the patients route
-    }
+  function navigateTo(page) {
+  if (page === 'patients') {
+    goto('/patients'); // Navigate to the patients route
   }
+}
 </script>
 
 <style>
 .app-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly; /* This will distribute space evenly */
+  justify-content: center; /* This will distribute space evenly */
   align-items: center;
   width: 100%;
   height: calc(100vh - var(--header-height) - var(--nav-bar-height)); /* Adjust --header-height and --nav-bar-height in :root if necessary */
@@ -35,40 +37,30 @@
       padding: 16px;
     }
 
-    .search-bar {
-      width: 100%; /* Search bar takes full width within .app-container */
-      margin: 60px; /* Adjusting the margin for mobile */
-    }
-
- 
 
     .middle-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-}
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around; /* Distributes space evenly */
+    width: 100%;
+    height: 100%; /* Takes full height available */
+    padding: 16px 0; /* Add padding at the top and bottom if needed */
+  }
 
   .button {
     border: none;
-    padding: 12px 20px; /* Padding inside the button */
-    width: calc(100% - 40px); /* Full width minus padding */
+    padding: 12px 20px;
+    width: calc(100% - 40px);
     text-align: left;
-    border-radius: 0; /* No rounded corners */
+    border-radius: 0;
     font-size: 16px;
     background-color: transparent;
-    color: #000; /* Text color - assuming black */
+    color: #000;
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Align arrow to the right */
-    margin-bottom: 16px; 
-  }
-
-  .button::after {
-    content: '→'; /* Arrow */
-    font-size: 24px;
-    margin-left: auto;
+    justify-content: space-between;
+    margin-bottom: 16px;
   }
 
 .icon-button {
@@ -78,7 +70,7 @@
 
 .icon-round {
     position: fixed;
-    bottom: 20px; /* Distance from bottom, adjust as needed */
+    bottom: 64px; /* Distance from bottom, adjust as needed */
     right: 20px; /* Distance from right, adjust as needed */
     z-index: 30; /* Higher than nav's z-index to ensure visibility */
     width: 64px;
@@ -87,22 +79,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 30px;
+    font-size: 12px;
     background-color: #fff; /* Or any desired background color */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
-.icon-round-container {
-  position: fixed;
-  bottom: 20px; /* Distance from bottom, adjust as needed */
-  right: 20px; /* Distance from right, adjust as needed */
-  z-index: 20; /* Higher than nav's z-index to ensure visibility */
-  width: var(--icon-round-size); /* Width of the round button */
-  height: var(--icon-round-size); /* Height of the round button */
-  display: flex; /* For centering the icon inside the button */
-  align-items: center; /* Center align */
-  justify-content: center; /* Center justify */
-}
+
 
 :root {
   --header-height: 60px;
@@ -118,14 +100,14 @@
 <div class="app-container">
 
   <div class="middle-buttons">
-    <button class="button" on:click={() => navigateTo('tasks')}>TASKS</button>
-    <button class="button" on:click={() => navigateTo('appointments')}>APPOINTMENTS</button>
-    <button class="button" on:click={() => navigateTo('messages')}>MESSAGES</button>
-    <button class="button" on:click={() => navigateTo('prescriptions')}>PRESCRIPTIONS</button>
-    <button class="button" on:click={() => navigateTo('referrals')}>REFERRALS</button>
-    <button class="button" on:click={() => navigateTo('patients')}>PATIENTS</button>
+    <Button text="TASKS →" action={() => navigateTo('tasks')} />
+      <Button text="APPOINTMENTS →" action={() => navigateTo('appointments')} />
+      <Button text="MESSAGES →" action={() => navigateTo('messages')} />
+      <Button text="PRESCRIPTIONS →" action={() => navigateTo('prescriptions')} />
+      <Button text="REFERRALS →" action={() => navigateTo('referrals')} />
+      <Button text="PATIENTS →" action={() => navigateTo('patients')} />
   </div>
 
-  <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>Notes</button>
+  <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
 
 </div>
