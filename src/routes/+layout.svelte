@@ -1,6 +1,7 @@
-<!-- layout.svelte -->
 <script>
   import { goto } from '$app/navigation';
+  export let searchPlaceholder = 'Search...'; 
+  export let includeRightButton = false;
 
   function handleButtonClick(action) {
     switch(action) {
@@ -13,7 +14,9 @@
       case 'Messages':
         goto('/messageList');
         break;
-
+      case 'Tasks':
+        goto('/tasks');
+        break;
     }
   }
 </script>
@@ -21,9 +24,12 @@
 
 <style>
   header {
+    height: var(--header-height);
     display: flex;
     justify-content: space-between;
-    padding: 16px;
+   padding-top: 16px;
+   padding-left: 16px;
+   padding-right: 16px;
     position: fixed; /* Fixed to the top */
     top: 0;
     left: 0;
@@ -34,17 +40,18 @@
 
    .content {
     /* Add padding-top equivalent to the height of the header plus search bar container */
-    padding-top: 120px; /* This is an example value; you need to adjust it based on your header's actual height */
+    padding-top: calc(var(--header-height) + var(--search-bar-height)); 
   }
   
   .search-bar-container {
+    height: var(--search-bar-height);
+    top: var(--header-height); /* Positioned below the header */
     width: 100%;
     padding-left: 0px;
     padding-right:0px;
     padding-top: 16px; /* Height of the header */
     box-sizing: border-box;
     position: fixed;
-    top: 60px; /* Place it right below the header */
     left: 0;
     right: 0;
     z-index: 90; /* Below the header z-index */
@@ -54,8 +61,8 @@
   @media (max-width: 768px) {
     /* Ensure the content of the page does not get hidden under the nav or header */
     .content {
-      padding-top: 120px; /* Adjust this value based on the total height of your fixed header and search bar */
-      padding-bottom: 70px; /* Adjust this value based on the height of your nav */
+      padding-top: calc(var(--header-height) + var(--search-bar-height)); 
+      /* padding-bottom: 70px; */
     }
 
   .search-bar {
@@ -116,9 +123,22 @@
 
     /* Ensure the content of the page does not get hidden under the nav */
     .content {
-      padding-bottom: 70px; /* Adjust based on the height of your nav */
+      padding-top: calc(var(--header-height) + var(--search-bar-height)); 
     }
 
+  }
+
+  :root {
+    --header-height: 60px; 
+    --search-bar-height: 60px; 
+    --nav-bar-height: 60px; 
+  }
+
+  .right-button-slot {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
 }
@@ -126,12 +146,17 @@
 
 <header>
   <button class="icon-button" on:click={() => handleButtonClick('Menu')}>☰</button>
-  <div class="logo">LOGO</div>
+  <button class="logo" on:click={() => handleButtonClick('Home')}>LOGO</button>
   <button class="icon-button" on:click={() => handleButtonClick('Profile')}>👤</button>
 </header>
 
 <div class="search-bar-container">
-  <input class="search-bar" type="text" placeholder="SEARCH BAR..."/>
+  <input class="search-bar" type="text" placeholder={searchPlaceholder} />
+  {#if includeRightButton}
+    <span class="right-button-slot">
+      <slot name="right-button"></slot> <!-- Named slot for right button -->
+    </span>
+  {/if}
 </div>
 
 <!-- Use the .content class to provide spacing for the fixed header and search bar -->

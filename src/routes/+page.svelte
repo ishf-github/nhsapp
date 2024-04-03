@@ -33,7 +33,8 @@
   justify-content: center; /* This will distribute space evenly */
   align-items: center;
   width: 100%;
-  height: calc(100vh - var(--header-height) - var(--nav-bar-height)); /* Adjust --header-height and --nav-bar-height in :root if necessary */
+  height: calc(100vh - var(--header-height) - var(--search-bar-height) - var(--nav-bar-height));
+  overflow-y: auto;
   padding: 16px;
   box-sizing: border-box;
   position: relative; /* This is new, ensures the icon-round is positioned relative to app-container */
