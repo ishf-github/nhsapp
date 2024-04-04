@@ -2,6 +2,9 @@
     import { writable } from 'svelte/store';
     import Button from "../../components/Button.svelte";
     import { goto } from '$app/navigation';
+    import { onMount, onDestroy } from 'svelte';
+    import { includeRightButton } from '../../stores.js'; // Adjust the path as necessary
+
 
 let tasks = [
   { id: '0001', taskType: 'REFERRAL', notes: 'Notes', status: '✓' },
@@ -16,10 +19,10 @@ let showReferral = writable(true);
 
     // Computed store for displaying tasks based on filters
     $: displayedTasks = tasks.filter(task => {
-        return ($showReferral || task.taskType !== 'REFERRAL') &&
-               ($showPrescription || task.taskType !== 'PRESCRIPTION') &&
-               (statusFilter === 'All' || task.status === $statusFilter);
-    });
+  return ($showReferral || task.taskType !== 'REFERRAL') &&
+         ($showPrescription || task.taskType !== 'PRESCRIPTION') &&
+         ($statusFilter === 'All' || task.status === $statusFilter);
+});
 
     // Functions for handling user interactions
     function openNotes(taskId) {
@@ -38,7 +41,16 @@ let showReferral = writable(true);
         statusFilter.set(value);
     }
 
-    </script>
+    onMount(() => {
+    includeRightButton.set(true);
+    });
+
+  onDestroy(() => {
+    // Optional, only if you want to hide the button when leaving the page
+    includeRightButton.set(false);
+    });
+</script>
+    
   
   {#if includeRightButton}
   <div class="dropdown">

@@ -1,7 +1,7 @@
 <script>
   import { goto } from '$app/navigation';
+  import { includeRightButton } from '../stores.js'; 
   export let searchPlaceholder = 'Search...'; 
-  export let includeRightButton = false;
 
   function handleButtonClick(action) {
     switch(action) {
@@ -151,10 +151,10 @@
 </header>
 
 <div class="search-bar-container">
-  <input class="search-bar" type="text" placeholder={searchPlaceholder} />
-  {#if includeRightButton}
+  <input class="search-bar" type="text" placeholder="Search..." />
+  {#if $includeRightButton}
     <span class="right-button-slot">
-      <slot name="right-button"></slot> <!-- Named slot for right button -->
+      <!-- Slot content for right button goes here, or directly include button markup -->
     </span>
   {/if}
 </div>
