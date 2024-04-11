@@ -1,11 +1,11 @@
 <script>
     let medications = [
       { name: 'Ibuprofen', brand: 'Nurofen', dosage: '500mg', instructions: '1 tablet up to 3 times a day.' },
-      // More medication objects...
+      
     ];
   
     function selectMedication(medicationId) {
-      // Logic to handle medication selection
+      
     }
   </script>
   
@@ -45,7 +45,7 @@
     .select-button {
       justify-self: end;
       padding: 0.5rem 1rem;
-      background-color: #005EB8; /* Primary color */
+      background-color: #005EB8;
       color: white;
       border: none;
       border-radius: 4px;

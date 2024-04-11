@@ -6,32 +6,32 @@
         alert("Button clicked");
     };
   
-    // Remove the TypeScript types to use plain JavaScript
+    
     function handleAction(button) {
       if (button === 'View Record') {
-        goto('/patientChart'); // Navigate to the patients route
+        goto('/patientChart'); 
       }
 
       if (button === 'Send Message') {
-        goto('/patientMessages'); // Navigate to the messages route
+        goto('/patientMessages'); 
       }
     }
 
     const patients = [
-      // Mock patient data
+      //placeholder data for now
       {
         name: 'John Doe',
         dob: '01/01/1990',
         nextAppt: '01/01/2025',
         tasks: 'Outstanding Tasks'
       },
-      // Add additional patient objects as needed
+      
     ];
 
   </script>
 
 <style>
-    /* Reuse the styles from layout.svelte */
+    
   
     .patient-container {
     display: flex;
@@ -46,10 +46,6 @@
   .patient-info {
     flex-grow: 1;
   }
-  
-  .patient-details {
-    margin-bottom: 8px;
-  }
 
   .patient-actions {
     display: flex;
@@ -57,6 +53,10 @@
     align-items: flex-end;
   }
   
+  /* .patient-details {
+    margin-bottom: 8px;
+  } */
+
   .cta-button {
     padding: 6px 12px;
     background-color: #f0f0f0;
@@ -65,7 +65,7 @@
     margin-top: 8px;
   }
 
-  .messages {
+  /* .messages {
     max-height: 300px;
     overflow-y: auto;
   }
@@ -74,17 +74,17 @@
     background-color: #d1d1d1;
     margin: 8px;
     padding: 8px;
-  }
+  } */
 
     .button {
-      margin-top: 8px; /* Adds spacing between buttons */
+      margin-top: 8px; 
     }
   
     .icon-round {
     position: fixed;
-    bottom: 64px; /* Distance from bottom, adjust as needed */
-    right: 20px; /* Distance from right, adjust as needed */
-    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    bottom: 64px; 
+    right: 20px; 
+    z-index: 30; 
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -92,16 +92,15 @@
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    background-color: #fff; /* Or any desired background color */
+    background-color: #fff; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
   
-    /* Add more styles as needed */
   </style>
   
   <div class="patients-page">
-    <!-- List of patients -->
+  
     {#each patients as patient}
       <div class="patient-container">
         <div class="patient-info">
@@ -109,13 +108,13 @@
             <p>Dob: {patient.dob}</p>
             <p>Next Appt: {patient.nextAppt}</p>
             <p>{patient.tasks}</p>
-            <button class="button" on:click={() => handleAction('View Tasks', patient)}>VIEW</button>
+            <button class="button" on:click={() => handleAction('View Tasks')}>VIEW</button>
         </div>
         <div class="patient-actions">
-            <button class="button" on:click={() => handleAction('View Record', patient)}>VIEW RECORD</button>
-            <button class="button" on:click={() => handleAction('Send Message', patient)}>SEND MESSAGE</button>
-            <button class="button" on:click={() => handleAction('Schedule Appt', patient)}>SCHEDULE APPT</button>
-            <button class="button" on:click={() => handleAction('Refer', patient)}>REFER</button>
+            <button class="cta-button" on:click={() => handleAction('View Record')}>VIEW RECORD</button>
+            <button class="cta-button" on:click={() => handleAction('Send Message')}>SEND MESSAGE</button>
+            <button class="cta-button" on:click={() => handleAction('Schedule Appt')}>SCHEDULE APPT</button>
+            <button class="cta-button" on:click={() => handleAction('Refer')}>REFER</button>
         </div>
         </div>
     {/each}

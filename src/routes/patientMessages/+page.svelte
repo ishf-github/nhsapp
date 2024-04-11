@@ -10,9 +10,9 @@
   if (page === 'patients') {
     goto('/patients');
   } else if (page === 'notes') {
-    goto('/notes'); // Ensure this is the correct route
+    goto('/notes'); 
   }
-  // Add more cases as needed
+  
 }
 
     let patientSummary = {
@@ -24,7 +24,7 @@
     let messages = [
       { content: 'Hello there!', sender: 'patient', timestamp: 'Yesterday' },
       { content: 'How can I help you today?', sender: 'provider', timestamp: 'Today' },
-      // More messages...
+      
     ];
   
     let newMessageContent = '';
@@ -43,13 +43,13 @@
     }
   
     function viewPatientRecord() {
-      // Navigate to the patient record
-      goto('/patientRecord'); // Update this to your actual route
+      
+      goto('/patientRecord'); 
     }
   
     function viewNotes() {
-      // Navigate to the notes page
-      goto('/notes'); // Update this to your actual route
+      
+      goto('/notes'); 
     }
   </script>
   
@@ -89,13 +89,13 @@
   
     .message-input {
     position: fixed;
-    bottom: 70px; /* Adjust this value to the height of your nav bar */
+    bottom: 70px; 
     left: 0;
     right: 0;
     padding: 8px;
     background: white;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* Make sure this is less than the z-index of your nav bar so it doesn't overlap */
+    z-index: 10; 
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -103,30 +103,30 @@
   
   .message-input textarea {
     flex-grow: 1;
-    margin-right: 8px; /* Spacing between textarea and buttons */
+    margin-right: 8px; 
   }
 
   .message-input button {
-    width: 48x; /* Making the button square */
-    height: 48px; /* Making the button square */
+    width: 48x; 
+    height: 48px; 
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px; /* Adjust size for the paperclip icon if necessary */
-    background-color: #f0f0f0; /* Your button background color */
+    font-size: 24px; 
+    background-color: #f0f0f0; 
     border: none;
     cursor: pointer;
   }
 
     .patient-messages-page {
-      margin-bottom: 70px; /* Adjusted for fixed nav bar height */
+      margin-bottom: 70px; 
     }
   
     .icon-round {
     position: fixed;
-    bottom: 64px; /* Distance from bottom, adjust as needed */
-    right: 20px; /* Distance from right, adjust as needed */
-    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    bottom: 64px; 
+    right: 20px; 
+    z-index: 30; 
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -134,14 +134,14 @@
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    background-color: #fff; /* Or any desired background color */
+    background-color: #fff; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
 
   .attach-button {
-    font-family: 'Font Awesome 5 Free'; /* Using Font Awesome for the paperclip icon */
-    font-weight: 900; /* Font Awesome specific font-weight for solid icons */
+    font-family: 'Font Awesome 5 Free'; 
+    font-weight: 900; 
   }
 
   </style>
@@ -154,7 +154,6 @@
       <button on:click={viewPatientRecord}>VIEW RECORD</button>
     </div>
   
-    <!-- Messages display -->
     <div class="messages">
       {#each messages as message (message.timestamp)}
         <div class="message {message.sender}">
@@ -164,11 +163,10 @@
       {/each}
     </div>
   
-    <!-- Message input -->
     <div class="message-input">
         <textarea bind:value={newMessageContent} placeholder="Type your message here..."></textarea>
         <button class="attach-button" on:click={attachFile}>
-          &#x1F4CE; <!-- This is the Unicode for paperclip, you can replace it with an icon from a library like Font Awesome -->
+          &#x1F4CE; 
         </button>
         <button on:click={sendMessage}>SEND</button>
       </div>

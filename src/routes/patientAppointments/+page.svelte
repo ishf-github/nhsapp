@@ -1,5 +1,8 @@
 <script>
-    // Dummy data for appointments
+
+    import Button from "../../components/Button.svelte";
+    import { goto } from '$app/navigation';
+
     let appointments = [
       {
         id: 1,
@@ -8,14 +11,19 @@
         nextAppt: "01/01/2025",
         tasks: "Outstanding Tasks"
       },
-      // More appointments...
+      
     ];
   
-    // Dummy functions for button clicks
+   
     function viewRecord(id) {/* ... */}
     function sendMessage(id) {/* ... */}
     function manageAppt(id) {/* ... */}
     function viewTasks(id) {/* ... */}
+
+   function navigateTo(page) {
+    
+   }
+
   </script>
   
   <style>
@@ -59,6 +67,23 @@
       font-style: italic;
       color: #555;
     }
+
+    .icon-round {
+    position: fixed;
+    bottom: 64px; 
+    right: 20px; 
+    z-index: 30; 
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    background-color: #fff; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
   </style>
   
   <div class="appointments-page">
@@ -87,5 +112,7 @@
         </div>
       </div>
     {/each}
+
+    <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
   </div>
   

@@ -1,4 +1,3 @@
-<!-- src/routes/+page.svelte -->
 
 <script>
   import Button from "../components/Button.svelte";
@@ -8,12 +7,11 @@
       alert("Button clicked");
   };
 
-  // Remove the TypeScript types to use plain JavaScript
   function navigateTo(page) {
     if (page === 'patients') {
     goto('/patients');
   } else if (page === 'appointments') {
-    goto('/patientAppointments'); // Ensure this is the correct route
+    goto('/patientAppointments'); 
   } else if (page === 'messages') {
     goto('/messageList');
   } else if (page === 'prescriptions') {
@@ -30,21 +28,21 @@
 .app-container {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* This will distribute space evenly */
+  justify-content: center; 
   align-items: center;
   width: 100%;
   height: calc(100vh - var(--header-height) - var(--search-bar-height) - var(--nav-bar-height));
   overflow-y: auto;
   padding: 16px;
   box-sizing: border-box;
-  position: relative; /* This is new, ensures the icon-round is positioned relative to app-container */
+  position: relative; 
   padding-bottom: 100px;
 }
 
-@media (max-width: 768px) { /* Mobile view media query */
+@media (max-width: 768px) { 
     .app-container {
       width: 100%;
-      margin: 0; /* Updated to remove margin for mobile view */
+      margin: 0; 
       padding: 16px;
     }
 
@@ -52,13 +50,13 @@
     .middle-buttons {
     display: flex;
     flex-direction: column;
-    justify-content: space-around; /* Distributes space evenly */
+    justify-content: space-around; 
     width: 100%;
-    height: 100%; /* Takes full height available */
-    padding: 16px 0; /* Add padding at the top and bottom if needed */
+    height: 100%; 
+    padding: 16px 0; 
   }
 
-  .button {
+  /* .button {
     border: none;
     padding: 12px 20px;
     width: calc(100% - 40px);
@@ -72,7 +70,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
-  }
+  } */
 
 .icon-button {
   width: 48px;
@@ -81,9 +79,9 @@
 
 .icon-round {
     position: fixed;
-    bottom: 64px; /* Distance from bottom, adjust as needed */
-    right: 20px; /* Distance from right, adjust as needed */
-    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    bottom: 64px; 
+    right: 20px; 
+    z-index: 30; 
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -91,7 +89,7 @@
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    background-color: #fff; /* Or any desired background color */
+    background-color: #fff; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
@@ -100,9 +98,9 @@
 :root {
   --header-height: 60px;
   --nav-bar-height: 60px;
-  --icon-round-size: 64px; /* Size of the round button */
-  --icon-round-margin: 20px; /* Margin from the bottom for the round button */
-  --icon-round-total: calc(var(--icon-round-size) + var(--icon-round-margin)); /* Total space the round button occupies */
+  --icon-round-size: 64px; 
+  --icon-round-margin: 20px; 
+  --icon-round-total: calc(var(--icon-round-size) + var(--icon-round-margin)); 
 }
 }
 

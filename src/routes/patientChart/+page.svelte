@@ -8,11 +8,10 @@
 
     function handleAction(button) {
       if (button === 'viewMessages') {
-        goto('/patientMessages'); // Navigate to the patients route
+        goto('/patientMessages'); 
       }
     }
 
-    // Mock data for the patient's details
     let patient = {
         name: 'NAME SURNAME',
         dob: '01/01/1991',
@@ -35,34 +34,33 @@
         providerNotes: ''
     };
 
-    // Functions to handle actions like Edit, Print, PDF generation, Book Appointment, and Message
     function editPatientDetails() {
-        // Edit patient details logic here
+        
     }
 
     function printPatientChart() {
-        // Print patient chart logic here
+        
     }
 
     function savePatientChartAsPDF() {
-        // Save as PDF logic here
+        
     }
 
     function bookAppointment() {
-        // Booking logic here
+        
     }
 
     function viewMessages() {
-        // View messages logic here
+        
     }
 </script>
 
 <style>
     .icon-round {
     position: fixed;
-    bottom: 64px; /* Distance from bottom, adjust as needed */
-    right: 20px; /* Distance from right, adjust as needed */
-    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    bottom: 64px; 
+    right: 20px; 
+    z-index: 30; 
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -70,16 +68,16 @@
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    background-color: #fff; /* Or any desired background color */
+    background-color: #fff; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
 
   .messages-round {
     position: fixed;
-    bottom: 64px; /* Distance from bottom, adjust as needed */
-    right: 96px; /* Distance from right, adjust as needed */
-    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    bottom: 64px; 
+    right: 96px; 
+    z-index: 30; 
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -87,7 +85,7 @@
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    background-color: #808080; /* Or any desired background color */
+    background-color: #808080; 
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
@@ -95,7 +93,7 @@
 </style>
 
 <div class="patient-chart-page">
-    <!-- Header with Edit, PDF, and Print buttons -->
+    
     <header>
         <button on:click={editPatientDetails}>EDIT</button>
         <div class="logo">LOGO</div>
@@ -105,7 +103,7 @@
         </div>
     </header>
 
-    <!-- Patient details section -->
+   
     <section class="patient-details">
         <h1>{patient.name}</h1>
         <p>Dob: {patient.dob}</p>
@@ -116,7 +114,7 @@
         {/if}
     </section>
 
-    <!-- Contact details -->
+   
     <section class="contact-details">
         <h2>Contact Details:</h2>
         <p>Address:</p>
@@ -125,14 +123,14 @@
         <p>Phone: {patient.phone}</p>
     </section>
 
-    <!-- Medical Information -->
+    
     <section class="medical-info">
         <h2>Medical Information:</h2>
         <p>Conditions: {patient.medicalConditions}</p>
         <p>Other: {patient.otherMedicalInfo}</p>
     </section>
 
-    <!-- Allergies and Medication -->
+    
     <section class="allergies-medication">
         <p>Allergies: {patient.allergies}</p>
         <p>Medication Allergies: {patient.medicationAllergies}</p>
@@ -140,7 +138,7 @@
         <p>Chemotherapy: {patient.chemotherapy}</p>
     </section>
 
-    <!-- Mental and Body Information -->
+   
     <section class="mental-body-info">
         <p>Mental State: {patient.mentalState}</p>
         <p>Height: {patient.bodyInfo.height}</p>
@@ -148,15 +146,15 @@
         <p>Physical Disabilities: {patient.bodyInfo.disabilities}</p>
     </section>
 
-    <!-- Provider Notes -->
+    
     <section class="provider-notes">
         <textarea bind:value={patient.providerNotes} placeholder="Provider Notes"></textarea>
     </section>
 
-    <!-- Footer with round CTA buttons -->
+    
     <footer>
         <button class="icon-button messages-round" on:click={() => navigateTo('messages')}>MESSAGE</button>
         <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
-        <!-- Include other footer content or navigation buttons -->
+        
     </footer>
 </div>

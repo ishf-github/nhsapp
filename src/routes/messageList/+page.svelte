@@ -1,60 +1,63 @@
 <script>
     import { goto } from '$app/navigation';
     
-    // Placeholder for the message search query
+    
     let searchQuery = '';
   
-    // Placeholder messages data
+    
     const messages = [
       { name: 'NAME SURNAME', preview: 'Just to check, do you have...', id: 1 },
-      // Add more message objects as needed
+      
     ];
   
-    // Function to handle the navigation to the send message page
+    
     function sendMessage(id) {
-      // Implementation to navigate to the send message page for a given user
+      
       console.log('Send message to user with id:', id);
     }
   
     function navigateTo(page) {
-      goto(`/${page}`);
+        if (button === 'Send Message') {
+        goto('/patientMessages'); 
+      }
     }
+    
   </script>
   
   <style>
-    /* Styles for your components */
-    .search-container {
-      /* Styles for the search bar container */
-    }
+    
+    /* .search-container {
+      
+    } */
     
     .message-container {
-      /* Styles for the message container */
+      
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 10px;
-      border-bottom: 1px solid #ccc; /* Example style */
-    }
-    
-    .message-preview {
-      /* Styles for the message preview */
+      border-bottom: 1px solid #ccc; 
     }
     
     .send-message-button {
-      /* Styles for the send message CTA button */
-    }
+    padding: 6px 12px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin-top: 8px;
+  }
     
     .message-list {
-      /* Styles for the scrolling message list */
+      
       overflow-y: auto;
-      max-height: 300px; /* Adjust as needed */
+      max-height: 300px; 
     }
     
     .icon-round {
     position: fixed;
-    bottom: 64px; /* Distance from bottom, adjust as needed */
-    right: 20px; /* Distance from right, adjust as needed */
-    z-index: 30; /* Higher than nav's z-index to ensure visibility */
+    bottom: 64px; 
+    right: 20px; 
+    z-index: 30; 
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -62,7 +65,7 @@
     justify-content: center;
     align-items: center;
     font-size: 12px;
-    background-color: #fff; /* Or any desired background color */
+    background-color: #fff; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
@@ -79,12 +82,12 @@
             <div>{message.name}</div>
             <div class="message-preview">{message.preview}</div>
           </div>
-          <button class="send-message-button" on:click={() => sendMessage(message.id)}>SEND MESSAGE</button>
+          <button class="send-message-button" on:click={() => navigateTo('patientMessages')}>SEND MESSAGE</button>
         </div>
       {/each}
     </div>
-  
-    <!-- Round notes CTA button, identical to the one on the home page -->
+
+    
     <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
   
   

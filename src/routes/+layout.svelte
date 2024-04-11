@@ -1,7 +1,10 @@
 <script>
-  import { goto } from '$app/navigation';
-  import { includeRightButton } from '../stores.js'; 
+  import { goto } from '$app/navigation'; 
   export let searchPlaceholder = 'Search...'; 
+  import { includeRightButton, showFilters, showReferral, showPrescription, statusFilter } from '../stores.js';
+  import { writable } from 'svelte/store';
+
+
 
   function handleButtonClick(action) {
     switch(action) {
@@ -19,6 +22,15 @@
         break;
     }
   }
+
+  function setStatusFilter(status) {
+    statusFilter.set(status);
+    }
+
+  function toggleFilters() {
+    showFilters.update(n => !n);
+  }
+
 </script>
 
 
@@ -30,48 +42,52 @@
    padding-top: 16px;
    padding-left: 16px;
    padding-right: 16px;
-    position: fixed; /* Fixed to the top */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     background-color:#005EB8;
-    z-index: 100; /* Ensures the header is above other content */
+    z-index: 100;
   }
 
    .content {
-    /* Add padding-top equivalent to the height of the header plus search bar container */
+    max-width: 100vw;
+    box-sizing: border-box;
     padding-top: calc(var(--header-height) + var(--search-bar-height)); 
+    overflow: auto;
   }
   
   .search-bar-container {
-    height: var(--search-bar-height);
-    top: var(--header-height); /* Positioned below the header */
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
     width: 100%;
-    padding-left: 0px;
-    padding-right:0px;
-    padding-top: 16px; /* Height of the header */
     box-sizing: border-box;
-    position: fixed;
-    left: 0;
-    right: 0;
-    z-index: 90; /* Below the header z-index */
     background-color: white;
+    z-index: 90;
+    min-height: 50px; 
   }
+
 
   @media (max-width: 768px) {
-    /* Ensure the content of the page does not get hidden under the nav or header */
+    
     .content {
       padding-top: calc(var(--header-height) + var(--search-bar-height)); 
-      /* padding-bottom: 70px; */
+      
     }
 
-  .search-bar {
-    height: 48px;
-    width: 100%; /* Full width */
-    margin: 0 auto; /* Center the search bar if needed */
-    box-sizing: border-box; /* Include padding in the width */
-    border: 2px solid #005EB8;
+    .search-bar {
+  flex-grow: 1; 
+  margin-right: 8px;
   }
+
+}
+
+.filter-button {
+  flex-shrink: 0;
+}
 
   nav {
     display: flex;
@@ -81,7 +97,7 @@
     left: 0;
     right: 0;
     background-color: white;
-    z-index: 20; /* Ensure it's above the content but below floating buttons */
+    z-index: 20; 
   }
 
   .icon-button {
@@ -100,9 +116,9 @@
   }
 
   .nav-icon {
-    width: 48px; /* Adjust size for a square button */
-    height: 48px; /* Same as width for square */
-    flex-grow: 1; /* This will make all buttons grow to fill the nav equally */
+    width: 48px; 
+    height: 48px; 
+    flex-grow: 1; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -118,10 +134,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: white; /* Or any color fitting your design */
+      background-color: white; 
     }
 
-    /* Ensure the content of the page does not get hidden under the nav */
     .content {
       padding-top: calc(var(--header-height) + var(--search-bar-height)); 
     }
@@ -134,14 +149,39 @@
     --nav-bar-height: 60px; 
   }
 
-  .right-button-slot {
+  .filters-dropdown {
     position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 100%; 
+    left: 0;
+    right: 0; 
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    padding: 10px;
+    z-index: 200;
+    display: none;
+    max-width: calc(100% - 32px);
+    overflow-x: auto;
+  }
+
+.filters-dropdown.show {
+  display: block;
+}
+
+.filters-dropdown label,
+.filters-dropdown button {
+  display: block;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .filters-dropdown {
+    right: 0;
+    left: auto;
+
   }
 
 }
+
 </style>
 
 <header>
@@ -150,20 +190,60 @@
   <button class="icon-button" on:click={() => handleButtonClick('Profile')}>👤</button>
 </header>
 
-<div class="search-bar-container">
-  <input class="search-bar" type="text" placeholder="Search..." />
-  {#if $includeRightButton}
-    <span class="right-button-slot">
-      <!-- Slot content for right button goes here, or directly include button markup -->
-    </span>
-  {/if}
-</div>
-
-<!-- Use the .content class to provide spacing for the fixed header and search bar -->
 <div class="content">
+  <div class="search-bar-container">
+    <input class="search-bar" type="text" placeholder={searchPlaceholder} />
+    <button class="filter-button" on:click={toggleFilters}>Filters</button>
+    {#if $showFilters}
+      <div class="filters-dropdown show">
+        <!-- Filters content goes here -->
+        <label>
+          <input type="checkbox" bind:checked={$showReferral}> Referral
+        </label>
+        <label>
+          <input type="checkbox" bind:checked={$showPrescription}> Prescription
+        </label>
+        <button on:click={() => setStatusFilter('All')}>All</button>
+        <button on:click={() => setStatusFilter('✓')}>Completed</button>
+        <button on:click={() => setStatusFilter('✕')}>Not Completed</button>
+      </div>
+    {/if}
+  </div>
   <slot></slot>
 </div>
 
+<!-- {#if $showFilters}
+  <div class="filters-dropdown">
+    <label>
+      <input type="checkbox" bind:checked={$showReferral}> Referral
+    </label>
+    <label>
+      <input type="checkbox" bind:checked={$showPrescription}> Prescription
+    </label>
+  </div>
+{/if} -->
+
+<!-- <div class="content">
+  <div class="search-bar-container">
+    <input class="search-bar" type="text" placeholder={searchPlaceholder} />
+    <button class="filter-button" on:click={toggleFilters}>Filters</button>
+  </div>
+  <slot></slot>
+</div>
+
+{#if $showFilters}
+    <div class="filters-dropdown show">
+      <label>
+        <input type="checkbox" bind:checked={$showReferral}> Referral
+      </label>
+      <label>
+        <input type="checkbox" bind:checked={$showPrescription}> Prescription
+      </label>
+      <button on:click={() => setStatusFilter('All')}>All</button>
+      <button on:click={() => setStatusFilter('✓')}>Completed</button>
+      <button on:click={() => setStatusFilter('✕')}>Not Completed</button>
+    </div>
+  {/if} -->
 
 <nav>
     <button class="nav-icon" on:click={() => handleButtonClick('Patients')}>PATIENTS</button>

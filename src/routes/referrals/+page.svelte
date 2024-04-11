@@ -6,22 +6,22 @@
     let providerNotes = '';
     
     function submitReferral() {
-      // Implement the logic to submit the referral here
+      
       console.log('Submitting referral to:', selectedDepartment);
       console.log('Provider notes:', providerNotes);
-      // For now, let's navigate to a confirmation page or back to home
-      goto('/confirmation'); // Replace with the actual route for your confirmation page
+     
+      goto('/confirmation'); 
     }
     
     function attachFiles() {
-      // Implement file attachment logic here
+      
       console.log('Attaching files...');
     }
     
   </script>
   
   <style>
-    /* Add styles specific to this page here, make sure these do not conflict with your +layout.svelte styles */
+    
     .referral-page {
       padding: 1rem;
       display: flex;
@@ -31,7 +31,7 @@
   
     select, textarea, button {
       width: 100%;
-      padding: 0.5rem;
+      padding-right: 0.1rem;
       margin-bottom: 0.5rem;
     }
   
@@ -43,12 +43,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 3rem; /* Adjust as needed */
-      background-color: #ccc; /* Placeholder color, replace as needed */
+      height: 3rem; 
+      background-color: #ccc; 
       border: none;
     }
   
-    /* You can adjust the styles as per your application's theme and requirements */
+    
   </style>
   
   <div class="referral-page">
