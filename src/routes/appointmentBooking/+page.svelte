@@ -1,88 +1,94 @@
-<script>
-    import { writable } from 'svelte/store';
+'<script>
+    import { onMount } from 'svelte';
   
-    // Stores to hold the appointment date and time
-    let nameSurname = '';
-    let selectedDate = writable(null);
-    let selectedTime = '12:00 PM'; // Default time format, can be adjusted
+    let patientName = 'NAME SURNAME';
+    let patientDOB = 'DoB: 01/01/1991';
+    let nextAppointment = 'Next Appt: 02/03/2024';
+    let selectedDate;
+    let selectedTime;
   
-    // Function to save the appointment
-    function saveToCalendar() {
-      // Combine the date and time into a single object
-      // You would replace this with your actual logic to save the appointment
-      const appointment = {
-        nameSurname,
-        date: $selectedDate,
-        time: selectedTime,
-      };
+    onMount(() => {
       
-      console.log('Appointment to save:', appointment);
-      // Add saving logic here
+    });
+  
+    function saveAppointment() {
+      //save function
+      console.log(`Appointment set for ${selectedDate} at ${selectedTime}`);
     }
   
-    // This function will parse and format the date to a readable format
-    function formatDate(date) {
-      if (!date) return '';
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return new Date(date).toLocaleDateString('en-US', options);
+    function viewRecord() {
+      // patient record nav
     }
   </script>
   
-  <div class="booking-container">
-    <div>
-      <input 
-        type="text" 
-        placeholder="Name Surname" 
-        bind:value={nameSurname} 
-      />
-    </div>
-  
-    <div>
-      <label for="date">SELECT DATE:</label>
-      <input 
-        type="date" 
-        bind:value={$selectedDate}
-        on:change={() => selectedDate.set($selectedDate)}
-      />
-      <p>{formatDate($selectedDate)}</p>
-    </div>
-  
-    <div>
-      <label for="time">SELECT TIME:</label>
-      <input 
-        type="time" 
-        bind:value={selectedTime}
-      />
-    </div>
-  
-    <div>
-      <button on:click={saveToCalendar}>SAVE TO CALENDAR</button>
-    </div>
-  </div>
-  
   <style>
-    /* Add your styles here */
-    .booking-container {
+    .container {
       display: flex;
       flex-direction: column;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1rem;
     }
   
-    input, button {
-      margin: 0.5em 0;
-      padding: 0.5em;
+    .patient-details {
+      display: flex;
+      justify-content: space-between;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
     }
   
-    button {
-      background-color: #4CAF50; /* Green */
-      color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border: none;
+    .patient-info {
+      text-align: left;
+    }
+  
+    .button {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+      color: black;
+      padding: 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 8px;
       cursor: pointer;
+      border-radius: 4px;
     }
   
-    button:hover {
-      opacity: 0.8;
+    .time-input, .date-input {
+      text-align: left;
+      margin: 1rem 0;
+    }
+  
+    .save-button {
+      margin-top: 2rem;
     }
   </style>
   
+  <div class="container">
+    <div class="patient-details">
+      <div class="patient-info">
+        <h2>{patientName}</h2>
+        <p>{patientDOB}</p>
+        <p>{nextAppointment}</p>
+      </div>
+      <button class="button" on:click={viewRecord}>View Record</button>
+    </div>
+  
+    <div class="date-input">
+      <label for="date">Select Date:</label>
+      <input type="date" id="date" bind:value={selectedDate}>
+    </div>
+  
+    <div class="time-input">
+      <label for="time">Select Time:</label>
+      <input type="time" id="time" bind:value={selectedTime}>
+    </div>
+  
+    <button class="button save-button" on:click={saveAppointment}>Save to Calendar</button>
+  </div>
+  '
