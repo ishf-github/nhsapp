@@ -82,11 +82,6 @@
       font-size: 16px;
     }
   
-    .button.secondary {
-      background-color: #f0f0f0;
-      color: black;
-      margin-left: auto;
-    }
   
     .button-container {
       display: flex;
