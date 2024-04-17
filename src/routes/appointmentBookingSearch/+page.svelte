@@ -20,6 +20,12 @@
         console.log(`Searching for: ${searchQuery}`);
         showModal.set(false);
     }
+
+    function handleKeydown(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            toggleModal();
+        }
+    }
 </script>
 
 <style>
@@ -103,7 +109,7 @@
         background-color: #f0f0f0;
         border: 1px solid #ccc;
       color: black;
-      padding: 1 rem 2 rem;
+      padding: 1rem 2rem;
       text-align: center;
       text-decoration: none;
       display: inline-block;
