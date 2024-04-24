@@ -11,12 +11,12 @@
     }
 
     function saveAppointment() {
-        // Implement appointment saving logic here
+        
         console.log(`Appointment set for ${selectedDate} at ${selectedTime}`);
     }
 
     function performSearch() {
-        // Implement search logic here
+        
         console.log(`Searching for: ${searchQuery}`);
         showModal.set(false);
     }
@@ -44,13 +44,13 @@
     }
 
     .search-button {
-        display: inline-flex; /* Use inline-flex for aligning text next to icon */
+        display: inline-flex; 
         align-items: center;
         cursor: pointer;
         background: none;
         border: none;
         padding: 0;
-        color: inherit; /* Inherits font properties from parent */
+        color: inherit; 
     }
 
     .search-icon {
@@ -58,11 +58,11 @@
         border: 1px solid #ccc;
         border-radius: 50%;
         padding: 0.5rem;
-        margin-right: 0.5rem; /* Space between icon and text */
+        margin-right: 0.5rem; 
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 30px; /* Smaller size for just the icon */
+        width: 30px; 
         height: 30px;
     }
 
@@ -73,9 +73,9 @@
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: #fff;
-        width: 80%; /* Sets the modal width to 80% of the viewport width */
-        max-width: 600px; /* Sets a maximum width for the modal */
-        height: auto; /* Height adjusts to the content */
+        width: 80%; 
+        max-width: 600px; 
+        height: auto; 
         padding: 2rem;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -137,7 +137,7 @@
 
     input[type="date"],
     input[type="time"] {
-        /* Adjust width as necessary */
+       
         max-width: 100%;
         box-sizing: border-box;
     }

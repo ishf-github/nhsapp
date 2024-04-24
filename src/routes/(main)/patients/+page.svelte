@@ -1,5 +1,5 @@
 <script>
-    import Button from "../../components/Button.svelte";
+    // import Button from "src/components/Button.svelte";
     import { goto } from '$app/navigation';
     
     const handleClick = () => {
@@ -52,10 +52,6 @@
     flex-direction: column;
     align-items: flex-end;
   }
-  
-  /* .patient-details {
-    margin-bottom: 8px;
-  } */
 
   .cta-button {
     padding: 6px 12px;
@@ -64,17 +60,6 @@
     cursor: pointer;
     margin-top: 8px;
   }
-
-  /* .messages {
-    max-height: 300px;
-    overflow-y: auto;
-  }
-
-  .message {
-    background-color: #d1d1d1;
-    margin: 8px;
-    padding: 8px;
-  } */
 
     .button {
       margin-top: 8px; 

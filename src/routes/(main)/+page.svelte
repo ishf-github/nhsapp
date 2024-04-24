@@ -1,6 +1,6 @@
 
 <script>
-  import Button from "../components/Button.svelte";
+  import Button from "../../components/Button.svelte"; 
   import { goto } from '$app/navigation';
   
   const handleClick = () => {
@@ -43,7 +43,7 @@
     .app-container {
       width: 100%;
       margin: 0; 
-      padding: 16px;
+      padding: 4%;
     }
 
 
@@ -53,8 +53,28 @@
     justify-content: space-around; 
     width: 100%;
     height: 100%; 
-    padding: 16px 0; 
+    padding: 4% 0; 
   }
+
+}
+
+@media (min-width: 769px) {
+  .app-container {
+      width: 100%;
+      margin: 0; 
+      padding: 4%;
+    }
+
+
+    .middle-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around; 
+    width: 100%;
+    height: 100%; 
+    padding: 4% 0; 
+  }
+}
 
   /* .button {
     border: none;
@@ -73,8 +93,8 @@
   } */
 
 .icon-button {
-  width: 48px;
-  height: 48px;
+  width: 8vh;
+  height: 8vh;
 }
 
 .icon-round {
@@ -96,25 +116,25 @@
 
 
 :root {
-  --header-height: 60px;
-  --nav-bar-height: 60px;
-  --icon-round-size: 64px; 
-  --icon-round-margin: 20px; 
+  --header-height: 10vh;
+  --nav-bar-height: 10vh;
+  --icon-round-size: 10vh; 
+  --icon-round-margin: 5vw; 
   --icon-round-total: calc(var(--icon-round-size) + var(--icon-round-margin)); 
 }
-}
+
 
 </style>
 
 <div class="app-container">
 
   <div class="middle-buttons">
-    <Button text="TASKS →" action={() => navigateTo('tasks')} />
-      <Button text="APPOINTMENTS →" action={() => navigateTo('appointments')} />
-      <Button text="MESSAGES →" action={() => navigateTo('messages')} />
-      <Button text="PRESCRIPTIONS →" action={() => navigateTo('prescriptions')} />
-      <Button text="REFERRALS →" action={() => navigateTo('referrals')} />
-      <Button text="PATIENTS →" action={() => navigateTo('patients')} />
+    <Button text="TASKS" action={() => navigateTo('tasks')} />
+      <Button text="APPOINTMENTS" action={() => navigateTo('appointments')} />
+      <Button text="MESSAGES" action={() => navigateTo('messages')} />
+      <Button text="PRESCRIPTIONS" action={() => navigateTo('prescriptions')} />
+      <Button text="REFERRALS" action={() => navigateTo('referrals')} />
+      <Button text="PATIENTS" action={() => navigateTo('patients')} />
   </div>
 
   <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
