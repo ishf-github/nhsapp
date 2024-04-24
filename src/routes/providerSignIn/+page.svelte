@@ -1,10 +1,10 @@
 <script>
-    // You can implement your login logic here
+    
     let email = '';
     let password = '';
   
     const handleLogin = () => {
-      // Your login logic here
+    
     };
   </script>
   
