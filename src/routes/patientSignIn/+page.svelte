@@ -1,18 +1,6 @@
 <script>
-  import { goto } from '$app/navigation';
-  import { onMount} from 'svelte';
-  import { supabase } from '../../supabaseClient.js';  
+  import { goto } from '$app/navigation'; 
 
-  let providers = [];
-
-  onMount(async () => {
-    const { data, error } = await supabase
-      .from('providers')
-      .select('*');
-
-    if (error) console.log('Error:', error);
-    else providers = data;
-  });
 
     let email = '';
     let password = '';
@@ -21,13 +9,13 @@
     
     };
 
-    const navigateToPatientSignIn = () => {
-    goto('../patientSignIn');
-    };
+    const navigateToProviderSignIn = () => {
+    goto('../providerSignIn');
+  };
 
-    const navigateToProviderRegistration = () => {
-    goto('../providerRegistration');
-    };
+    const navigateToPatientRegistration = () => {
+      goto('../patientRegistration');
+    }
 
   </script>
   
@@ -76,11 +64,12 @@
       width: 100%;
       background-color: #005EB8;
       color: white;
-      padding: 10px;
+      padding: 0.5rem;
       border: none;
       border-radius: 4px;
-      margin-bottom: 1rem;
       cursor: pointer;
+      margin-bottom: 1rem;
+      text-align: center;
     }
   
     .register {
@@ -110,7 +99,7 @@
   <div class="login-container">
     <div class="login-card">
       <div class="logo">
-        <img src="src\myNHS Logo.png" alt="myNHS logo" style="max-width: 120px;">
+        <img src="src/myNHS Logo.png" alt="myNHS logo" style="max-width: 120px;">
       </div>
       <h2>Log in</h2>
       <div class="input-container">
@@ -120,12 +109,12 @@
         <input type="password" bind:value={password} placeholder="Password">
       </div>
       <button class="login-button" on:click={handleLogin}>Sign in</button>
-      <button class="register" on:click={navigateToProviderRegistration}>Register account</button>
+      <button class="register" on:click={navigateToPatientRegistration}>Register account</button>
       <div class="forgot-password">
         Forgot password?
       </div>
-      <div class="switch-user" on:click={navigateToPatientSignIn}>
-        Patient? Sign in here
+      <div class="switch-user" on:click={navigateToProviderSignIn}>
+        Provider? Sign in here
       </div>
     </div>
   </div>
