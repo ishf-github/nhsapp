@@ -17,8 +17,20 @@
     let email = '';
     let password = '';
   
-    const handleLogin = () => {
+    const handleLogin = async() => {
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+})
+    console.log("data:",data)
+    console.log("error:",error)
+
+    if (data.user&&data.session){goto('/')} 
     
+    else
+    console.log(error)
+
     };
 
     const navigateToPatientSignIn = () => {

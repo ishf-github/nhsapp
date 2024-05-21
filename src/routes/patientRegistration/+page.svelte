@@ -1,12 +1,24 @@
 <script>
     import { goto } from '$app/navigation'; 
+    import { supabase } from '../../supabaseClient.js';  
   
     let email = '';
     let password = '';
     let confirmPassword = '';
   
-    const handleRegistration = () => {
-      // Registration logic here
+    const handleRegistration = async () => {
+    
+    const { data, error } = await supabase.auth.signUp(
+  {
+    email: email,
+    password: password,
+    options: {
+      data: {
+        provider: false,
+      }
+    }
+  }
+)
     };
   
     const navigateToSignIn = () => {
