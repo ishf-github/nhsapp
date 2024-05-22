@@ -13,12 +13,10 @@
     function handleButtonClick(action) {
       switch(action) {
         case 'Home': goto('/'); break;
-        case 'Patients': goto('/patients'); break;
-        case 'Appointments': goto('/patientAppointments'); break;
-        case 'Messages': goto('/messageList'); break;
-        case 'Tasks': goto('/tasks'); break;
-        case 'Referrals': goto('/referrals'); break;
-        case 'Prescriptions': goto('/prescriptions'); break;
+        case 'gpRecord': goto('/patientPath/gp-record'); break;
+        case 'myAppointments': goto('/patientPath/my-appointments'); break;
+        case 'myPrescriptions': goto('/patientPath/my-prescriptions'); break;
+        case 'myMessages': goto('/patientPath/my-inbox'); break;
         case 'SignOut': // signout logic break;
       }
       showDropdown = false;
@@ -70,7 +68,7 @@
     }
   
     function navigateHome() {
-      goto('/');
+      goto('/patientPath/patient-home');
     }
   
   </script>
@@ -236,6 +234,7 @@
   }
   
   .side-nav {
+    
       display: none;
       position: fixed;
       top: var(--header-height);
@@ -337,11 +336,11 @@
   <header>
     <button class="icon-button menu-button" on:click={toggleDropdown}>☰</button>
     <ul class="dropdown-menu" class:show={showDropdown}>
-      <li class="dropdown-item" on:click={() => navigateTo('/')}>Home</li>
-      <li class="dropdown-item" on:click={() => navigateTo('/gpRecord')}>My GP Record</li>
-      <li class="dropdown-item" on:click={() => navigateTo('/myAppointments')}>Appointments</li>
-      <li class="dropdown-item" on:click={() => navigateTo('/myPrescriptions')}>Prescriptions</li>
-      <li class="dropdown-item" on:click={() => navigateTo('/myMessages')}>Messages</li>
+      <li class="dropdown-item" on:click={() => navigateTo('/patientPath/patient-home')}>Home</li>
+      <li class="dropdown-item" on:click={() => navigateTo('/patientPath/gp-record')}>My GP Record</li>
+      <li class="dropdown-item" on:click={() => navigateTo('/patientPath/my-appointments')}>Appointments</li>
+      <li class="dropdown-item" on:click={() => navigateTo('/patientPath/my-prescriptions')}>Prescriptions</li>
+      <li class="dropdown-item" on:click={() => navigateTo('/patientPath/my-inbox')}>Messages</li>
       <li class="dropdown-item" on:click={() => navigateTo('/signout')}>Sign Out</li>
     </ul>
     <div class="logo" role="button" tabindex="0" on:click={navigateHome} on:keydown={(event) => handleKeydown(event, 'Home')}>
@@ -356,8 +355,8 @@
   </div>
   
   <nav>
-      <button class="nav-icon" on:click={() => handleButtonClick('Patients')}>PATIENTS</button>
-      <button class="nav-icon" on:click={() => handleButtonClick('Appointments')}>APPTS</button>
-      <button class="nav-icon" on:click={() => handleButtonClick('Messages')}>MESSAGES</button>
-      <button class="nav-icon" on:click={() => handleButtonClick('Tasks')}>TASKS</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('gpRecord')}>GP RECORD</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('myAppointments')}>APPTS</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('myHealth')}>MY HEALTH</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('myMessages')}>MESSAGES</button>
   </nav>

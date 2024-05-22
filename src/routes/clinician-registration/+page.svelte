@@ -37,96 +37,16 @@
     console.log("data:",data)
     console.log("error:",error)
 
-
-    // try {
-    //   const { data: existingProvider, error: providerError } = await supabase
-    //     .from('providers')
-    //     .select('email')
-    //     .eq('email', email)
-    //     .single();
-
-    //   if (providerError && providerError.message !== "JSON object requested, multiple (or no) rows returned") {
-    //     errorMessage = 'Failed to check existing accounts.';
-    //     console.error('Error:', providerError);
-    //     return;
-    //   }
-
-    //   if (existingProvider) {
-    //     errorMessage = 'Email already registered.';
-    //     return;
-    //   }
-
-    //   if (password !== confirmPassword) {
-    //     errorMessage = 'Passwords do not match.';
-    //     return;
-    //   }
-
-    //   const verificationCode = generateVerificationCode();
-    //   const expiryTimestamp = new Date(new Date().getTime() + 10 * 60000); // Sets expiry time to 10 minutes from now
-
-    //   // Generate a new provider ID (8-digit integer)
-    //   const newProviderId = generateRandomInt(10000000, 99999999);
-
-    //   // Insert the new verification entry
-    //   const { data: verificationData, error: verificationError } = await supabase
-    //     .from('provider_verification')
-    //     .insert([{
-    //       verification_id: generateRandomInt(10000000, 99999999),
-    //       provider_id: newProviderId,
-    //       verification_code: verificationCode,
-    //       expiry_timestamp: expiryTimestamp,
-    //       verified: false,
-    //       created_at: new Date()
-    //     }]);
-
-    //   if (verificationError) {
-    //     errorMessage = 'Failed to create verification record.';
-    //     console.error('Verification Error:', verificationError);
-    //     return;
-    //   }
-
-    //   // Send verification email
-    //   const response = await fetch('/api/sendVerificationEmail', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //       to: email,
-    //       subject: 'Verify Your Email',
-    //       text: `Your verification code is ${verificationCode}`,
-    //       html: `<strong>Your verification code is ${verificationCode}</strong>`
-    //     })
-    //   });
-
-    //   const responseData = await response.json();
-
-    //   if (!response.ok) {
-    //     console.error('Error sending email:', responseData);
-    //     errorMessage = 'Failed to send verification email.';
-    //     return;
-    //   }
-
-    //   // Navigate to providerVerification page
-    //   goto('../providerVerification');
-    // } catch (err) {
-    //   console.error('Unexpected Error:', err);
-    //   errorMessage = 'Unexpected error occurred.';
-    // }
   };
 
   const navigateToSignIn = () => {
-    goto('../providerSignIn');
+    goto('../clinician-signin');
   };
 </script>
 
-<!-- Add your existing styles and HTML here -->
-
-
-
 <style>
   .registration-container {
-    font-family: 'Frutiger', sans-serif;
+    font-family: 'Frutiger W01', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;

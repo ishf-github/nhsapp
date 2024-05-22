@@ -34,11 +34,11 @@
     };
 
     const navigateToPatientSignIn = () => {
-    goto('../patientSignIn');
+    goto('../patient-signin');
     };
 
     const navigateToProviderRegistration = () => {
-    goto('../providerRegistration');
+    goto('../clinician-registration');
     };
 
   </script>

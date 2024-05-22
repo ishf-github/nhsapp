@@ -9,13 +9,13 @@
   
     function navigateTo(page) {
       if (page === 'gpRecord') {
-      goto('/gpRecord');
-    } else if (page === 'myappointments') {
-      goto('/myAppointments'); 
+      goto('/patientPath/gp-record');
+    } else if (page === 'myAppointments') {
+      goto('/patientPath/my-appointments'); 
     } else if (page === 'myPrescriptions') {
-      goto('/myPrescriptions');
+      goto('/patientPath/my-prescriptions');
     } else if (page === 'myMessages') {
-      goto('/myMessages');
+      goto('/patientPath/my-inbox');
     
   }
 }
@@ -126,15 +126,10 @@
   <div class="app-container">
   
     <div class="middle-buttons">
-      <Button text="TASKS" action={() => navigateTo('tasks')} />
-        <Button text="APPOINTMENTS" action={() => navigateTo('appointments')} />
-        <Button text="MESSAGES" action={() => navigateTo('messages')} />
-        <Button text="PRESCRIPTIONS" action={() => navigateTo('prescriptions')} />
-        <Button text="REFERRALS" action={() => navigateTo('referrals')} />
-        <Button text="PATIENTS" action={() => navigateTo('patients')} />
+      <Button text="MY GP RECORD" action={() => navigateTo('gpRecord')} />
+        <Button text="APPOINTMENTS" action={() => navigateTo('myAppointments')} />
+        <Button text="PRESCRIPTIONS" action={() => navigateTo('myPrescriptions')} />
+          <Button text="MESSAGES" action={() => navigateTo('myMessages')} />
     </div>
-  
-    <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
-  
   </div>
   

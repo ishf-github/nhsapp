@@ -150,9 +150,9 @@
 
 }
 
-.filter-button {
+/* .filter-button {
   flex-shrink: 0;
-}
+} */
 
   nav {
     display: flex;
@@ -228,7 +228,7 @@
     --nav-bar-height: 60px; 
   }
 
-  .filters-dropdown {
+  /* .filters-dropdown {
     position: absolute;
     top: 100%; 
     left: 0;
@@ -250,15 +250,15 @@
 .filters-dropdown button {
   display: block;
   margin-bottom: 8px;
-}
+} */
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .filters-dropdown {
     right: 0;
     left: auto;
   }
 
-}
+} */
 
 .search-bar {
   flex-grow: 1;

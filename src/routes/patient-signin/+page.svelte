@@ -1,34 +1,28 @@
 <script>
-    import { goto } from '$app/navigation'; 
-    import { supabase } from '../../supabaseClient.js';  
-  
+  import { goto } from '$app/navigation'; 
+
+
     let email = '';
     let password = '';
-    let confirmPassword = '';
   
-    const handleRegistration = async () => {
+    const handleLogin = () => {
     
-    const { data, error } = await supabase.auth.signUp(
-  {
-    email: email,
-    password: password,
-    options: {
-      data: {
-        provider: false,
-      }
+    };
+
+    const navigateToProviderSignIn = () => {
+    goto('../clinician-signin');
+  };
+
+    const navigateToPatientRegistration = () => {
+      goto('../patient-registration');
     }
-  }
-)
-    };
-  
-    const navigateToSignIn = () => {
-      goto('../patientSignIn');
-    };
-  
+
   </script>
   
   <style>
-    .registration-container {
+    
+  
+    .login-container {
       font-family: 'Frutiger', sans-serif;
       display: flex;
       flex-direction: column;
@@ -38,7 +32,7 @@
       padding: 20px;
     }
   
-    .registration-card {
+    .login-card {
       background: #fff;
       padding: 40px;
       border-radius: 8px;
@@ -66,49 +60,61 @@
       border-radius: 4px;
     }
   
-    .registration-button {
+    .login-button {
       width: 100%;
       background-color: #005EB8;
       color: white;
-      padding: 10px;
+      padding: 0.5rem;
       border: none;
       border-radius: 4px;
+      cursor: pointer;
       margin-bottom: 1rem;
-      cursor: pointer;
-    }
-  
-    .switch-user {
       text-align: center;
-      color: #005EB8;
-      cursor: pointer;
-      padding-top: 16px;
     }
   
+    .register {
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    color: #005EB8;
+    border: 2px solid #005EB8;
+    border-radius: 4px;
+    padding: 0.5rem;
+    }
+
+    .forgot-password, .switch-user {
+    text-align: center;
+    color: #005EB8;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
     @media (max-width: 600px) {
-      .registration-card {
+      .login-card {
         padding: 20px;
       }
     }
   </style>
   
-  <div class="registration-container">
-    <div class="registration-card">
+  <div class="login-container">
+    <div class="login-card">
       <div class="logo">
         <img src="src/myNHS Logo.png" alt="myNHS logo" style="max-width: 120px;">
       </div>
-      <h2>Register</h2>
+      <h2>Log in</h2>
       <div class="input-container">
         <input type="email" bind:value={email} placeholder="Email">
       </div>
       <div class="input-container">
         <input type="password" bind:value={password} placeholder="Password">
       </div>
-      <div class="input-container">
-        <input type="password" bind:value={confirmPassword} placeholder="Confirm Password">
+      <button class="login-button" on:click={handleLogin}>Sign in</button>
+      <button class="register" on:click={navigateToPatientRegistration}>Register account</button>
+      <div class="forgot-password">
+        Forgot password?
       </div>
-      <button class="registration-button" on:click={handleRegistration}>Agree and continue</button>
-      <div class="switch-user" on:click={navigateToSignIn}>
-        Already registered? Sign in here
+      <div class="switch-user" on:click={navigateToProviderSignIn}>
+        Provider? Sign in here
       </div>
     </div>
   </div>
