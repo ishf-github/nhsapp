@@ -2,12 +2,14 @@
   import { onMount } from 'svelte';
   import { supabase } from '../../../supabaseClient';
   import { writable } from 'svelte/store';
+  import { v4 as uuidv4 } from 'uuid'; // Import UUID library
 
   let selectedDate;
   let selectedTime;
   const showModal = writable(false);
   let clinicians = [];
   let selectedClinician = '';
+  let selectedClinicianId = null;
 
   const gpSurgeryName = 'GP Surgery Name';
   const gpAddress = 'Line 1, Line 2, City, County, Postcode';
@@ -16,7 +18,7 @@
     try {
       const { data, error } = await supabase
         .from('clinicians')
-        .select('first_name, last_name');
+        .select('clinician_id, first_name, last_name');
 
       if (error) {
         console.error('Error fetching clinicians:', error.message, error.hint, error.details);
@@ -31,8 +33,43 @@
     }
   });
 
-  function saveAppointment() {
-    console.log(`Appointment set for ${selectedDate} at ${selectedTime} with ${selectedClinician}`);
+  async function saveAppointment() {
+    // Find the selected clinician
+    const clinician = clinicians.find(clin => `${clin.first_name} ${clin.last_name}` === selectedClinician);
+
+    if (!clinician) {
+      console.error('Clinician not found');
+      return;
+    }
+
+    selectedClinicianId = clinician.clinician_id;
+
+    const newAppointment = {
+      appointment_id: uuidv4(),
+      clinician_name: `${clinician.first_name} ${clinician.last_name}`,
+      clinician_id: selectedClinicianId,
+      patient_name: null, // Replace with actual patient name if available
+      patient_id: null, // Replace with actual patient ID if available
+      appointment_date: selectedDate,
+      appointment_time: selectedTime,
+      appointment_type: null,
+      notes: null,
+      status: null
+    };
+
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .insert([newAppointment]);
+
+      if (error) {
+        console.error('Error saving appointment:', error.message, error.hint, error.details);
+      } else {
+        console.log('Appointment saved:', newAppointment);
+      }
+    } catch (err) {
+      console.error('Error inserting data:', err.message);
+    }
   }
 
   function toggleModal() {
