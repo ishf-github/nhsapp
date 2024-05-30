@@ -9,7 +9,6 @@
   const showModal = writable(false);
   let clinicians = [];
   let selectedClinician = '';
-  let selectedClinicianId = null;
 
   const gpSurgeryName = 'GP Surgery Name';
   const gpAddress = 'Line 1, Line 2, City, County, Postcode';
@@ -42,17 +41,15 @@
       return;
     }
 
-    selectedClinicianId = clinician.clinician_id;
-
     const newAppointment = {
       appointment_id: uuidv4(),
       clinician_name: `${clinician.first_name} ${clinician.last_name}`,
-      clinician_id: selectedClinicianId,
+      clinician_id: clinician.clinician_id,
       patient_name: null, // Replace with actual patient name if available
       patient_id: null, // Replace with actual patient ID if available
       appointment_date: selectedDate,
       appointment_time: selectedTime,
-      appointment_type: null,
+      appointment_type: 'video', // Set appointment type to 'video'
       notes: null,
       status: null
     };
