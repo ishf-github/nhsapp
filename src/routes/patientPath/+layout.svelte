@@ -1,341 +1,341 @@
 <script>
-    import { goto } from '$app/navigation'; 
-    export let searchPlaceholder = 'Search...'; 
-    import { includeRightButton, showFilters, showReferral, showPrescription, statusFilter } from '../../stores.js';
-    import { writable } from 'svelte/store';
-    import { onMount } from 'svelte';
-  
-  
-    let showDropdown = false;
-  
-    const showSideNav = writable(false);
-  
-    function handleButtonClick(action) {
-      switch(action) {
-        case 'Home': goto('/'); break;
-        case 'gpRecord': goto('/patientPath/gp-record'); break;
-        case 'myAppointments': goto('/patientPath/my-appointments'); break;
-        case 'myPrescriptions': goto('/patientPath/my-prescriptions'); break;
-        case 'myMessages': goto('/patientPath/my-inbox'); break;
-        case 'SignOut': // signout logic break;
-      }
+  import { goto } from '$app/navigation'; 
+  export let searchPlaceholder = 'Search...'; 
+  import { includeRightButton, showFilters, showReferral, showPrescription, statusFilter } from '../../stores.js';
+  import { writable } from 'svelte/store';
+  import { onMount } from 'svelte';
+
+
+  let showDropdown = false;
+
+  const showSideNav = writable(false);
+
+  function handleButtonClick(action) {
+    switch(action) {
+      case 'Home': goto('/'); break;
+      case 'gpRecord': goto('/patientPath/gp-record'); break;
+      case 'myAppointments': goto('/patientPath/my-appointments'); break;
+      case 'myPrescriptions': goto('/patientPath/my-prescriptions'); break;
+      case 'myMessages': goto('/patientPath/my-inbox'); break;
+      case 'SignOut': goto('/patient-signin'); break; // Redirect to sign-in page
+    }
+    showDropdown = false;
+  }
+
+  function toggleDropdown() {
+    showDropdown = !showDropdown;
+  }
+
+  function navigateTo(route) {
+    showDropdown = false; 
+    goto(route);
+  }
+
+  function closeDropdown() {
+    if (showDropdown) {
       showDropdown = false;
     }
-  
-    function toggleDropdown() {
-      showDropdown = !showDropdown;
-    }
-  
-    function navigateTo(route) {
-      showDropdown = false; 
-      goto(route);
-    }
-  
-    function closeDropdown() {
-      if (showDropdown) {
+  }
+
+  onMount(() => {
+    const handleOutsideClick = (event) => {
+      if (!event.target.closest('.dropdown-menu') && !event.target.closest('.menu-button')) {
         showDropdown = false;
       }
+    };
+
+    window.addEventListener('click', handleOutsideClick);
+    return () => {
+      window.removeEventListener('click', handleOutsideClick);
+    };
+  });
+
+  
+
+  function handleKeydown(event, action) {
+    if (event.key === 'Enter') {
+        handleButtonClick(action);
     }
+  }
+
+
+  function setStatusFilter(status) {
+    statusFilter.set(status);
+  }
+
+  function toggleFilters() {
+    showFilters.update(n => !n);
+  }
+
+  function navigateHome() {
+    goto('/patientPath/patient-home');
+  }
+
+</script>
+
+
+<style>
+
+.dropdown-menu {
+  position: absolute;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  z-index: 200;
+  display: none;
+}
+
   
-    onMount(() => {
-      const handleOutsideClick = (event) => {
-        if (!event.target.closest('.dropdown-menu') && !event.target.closest('.menu-button')) {
-          showDropdown = false;
-        }
-      };
+  .dropdown-menu.show {
+    display: block;
+  }
   
-      window.addEventListener('click', handleOutsideClick);
-      return () => {
-        window.removeEventListener('click', handleOutsideClick);
-      };
-    });
+  .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+  }
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+  .dropdown-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  :root {
+    --header-height: 60px;
+    --nav-bar-height: 60px;
+    --nav-bar-width: 250px;
+  }
   
-    
-  
-    function handleKeydown(event, action) {
-      if (event.key === 'Enter') {
-          handleButtonClick(action);
-      }
-    }
-  
-  
-    function setStatusFilter(status) {
-      statusFilter.set(status);
-    }
-  
-    function toggleFilters() {
-      showFilters.update(n => !n);
-    }
-  
-    function navigateHome() {
-      goto('/patientPath/patient-home');
-    }
-  
-  </script>
-  
-  
-  <style>
-  
-  .dropdown-menu {
-    position: absolute;
-    top: var(--header-height);
+  header {
+  height: var(--header-height);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #005EB8;
+  z-index: 100;
+}
+
+  .content {
+  padding-top: calc(var(--header-height) + 20px);
+  max-width: 100vw;
+  overflow: auto;
+  transition: padding-left 0.3s;
+}
+
+
+  @media (max-width: 768px) {
+  .content {
+    padding-top: calc(var(--header-height) + 10px);
+  }
+
+
+  .search-bar {
+  flex-grow: 1;
+  padding: 8px 16px;
+  border: 2px solid #ccc; 
+  margin-right: 8px;
+  display: block;
+  }
+
+}
+
+/* .filter-button {
+  flex-shrink: 0;
+} */
+
+  nav {
+    display: flex;
+  }
+
+  @media (max-width: 768px) {
+    nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
     left: 0;
     right: 0;
     background-color: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-    z-index: 200;
-    display: none;
+    z-index: 20; 
   }
+}
+
+.icon-button {
+  width: 48px;
+  height: 48px;
+  background-color: #005EB8;
+  color: white;
+  border: none;
+  font-size: 24px;
+}
+
+@media (max-width: 768px) {
   
-    
-    .dropdown-menu.show {
-      display: block;
-    }
-    
-    .dropdown-item {
-      padding: 10px;
-      cursor: pointer;
-      border-bottom: 1px solid #ccc;
-    }
-    .dropdown-item:last-child {
-      border-bottom: none;
-    }
-    .dropdown-item:hover {
-      background-color: #f0f0f0;
-    }
-  
-    :root {
-      --header-height: 60px;
-      --nav-bar-height: 60px;
-      --nav-bar-width: 250px;
-    }
-    
-    header {
-    height: var(--header-height);
+}
+
+  .logo {
+  display: flex;
+  align-items: center;
+  margin-right: 20px; 
+}
+
+  .nav-icon {
+    width: 48px; 
+    height: 48px; 
+    flex-grow: 1; 
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 0 16px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #005EB8;
-    z-index: 100;
-  }
-  
-    .content {
-    padding-top: calc(var(--header-height) + 20px);
-    max-width: 100vw;
-    overflow: auto;
-    transition: padding-left 0.3s;
-  }
-  
-  
-    @media (max-width: 768px) {
-    .content {
-      padding-top: calc(var(--header-height) + 10px);
-    }
-  
-  
-    .search-bar {
-    flex-grow: 1;
-    padding: 8px 16px;
-    border: 2px solid #ccc; 
-    margin-right: 8px;
-    display: block;
-    }
-  
-  }
-  
-  /* .filter-button {
-    flex-shrink: 0;
-  } */
-  
-    nav {
-      display: flex;
-    }
-  
-    @media (max-width: 768px) {
-      nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      justify-content: space-around;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: white;
-      z-index: 20; 
-    }
-  }
-  
-  .icon-button {
-    width: 48px;
-    height: 48px;
-    background-color: #005EB8;
     color: white;
-    border: none;
-    font-size: 24px;
+    font-weight: bold;
+    background-color: #005EB8;
+    border-color: #0072CE
   }
-  
+
+
   @media (max-width: 768px) {
-    
-  }
-  
-    .logo {
-    display: flex;
-    align-items: center;
-    margin-right: 20px; 
-  }
-  
-    .nav-icon {
-      width: 48px; 
-      height: 48px; 
-      flex-grow: 1; 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-weight: bold;
-      background-color: #005EB8;
-      border-color: #0072CE
-    }
-  
-  
-    @media (max-width: 768px) {
-      nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: white; 
-      }
-  
-      .content {
-        padding-top: calc(var(--header-height) + var(--search-bar-height)); 
-      }
-  
-    }
-  
-    :root {
-      --header-height: 60px; 
-      --search-bar-height: 60px; 
-      --nav-bar-height: 60px; 
-    }
-  
-  .search-bar {
-    flex-grow: 1;
-    padding: 8px 16px;
-    border: 2px solid #ccc;
-    margin-right: 20px;
-  }
-  
-  .side-nav {
-    
-      display: none;
+    nav {
       position: fixed;
-      top: var(--header-height);
       bottom: 0;
       left: 0;
-      width: var(--nav-bar-width);
-      background-color: #fff;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-      z-index: 10;
-      padding-top: 1rem;
+      right: 0;
+      background-color: white; 
+    }
+
+    .content {
+      padding-top: calc(var(--header-height) + var(--search-bar-height)); 
+    }
+
   }
+
+  :root {
+    --header-height: 60px; 
+    --search-bar-height: 60px; 
+    --nav-bar-height: 60px; 
+  }
+
+.search-bar {
+  flex-grow: 1;
+  padding: 8px 16px;
+  border: 2px solid #ccc;
+  margin-right: 20px;
+}
+
+.side-nav {
   
-  @media (min-width: 769px) {
-    nav {
-        display: none;
-      }
-  
-    .side-nav {
-    display: block;
+    display: none;
     position: fixed;
     top: var(--header-height);
     bottom: 0;
     left: 0;
     width: var(--nav-bar-width);
-    background-color: fff;
+    background-color: #fff;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 10;
-    padding-top: 2rem;
-  }
-  
-  .side-nav button {
-    background-color: #005EB8;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    border: none;
-    width: 100%;
-  }
-  
-    .side-nav nav,
-  .side-nav button {
-    display: block;
-  }
-  
-  .side-nav button:hover {
-    background-color: #f5f5f5;
-    color: #333;
-  }
-  
-    @media (min-width: 769px) {
-      .content {
-        padding-left: var(--nav-bar-width);
-      }
-      
-      .side-nav {
-        display: block; 
-      }
-  
-      
-      .sign-out-button {
-        display: block;
-        background-color: #005EB8;
-        color: white;
-        padding: 1rem;
-        text-align: center;
-        border: none;
-        margin-top: auto;
-        width: 100%;
-        border-top: 1px solid #eee;
-      }
+    padding-top: 1rem;
+}
+
+@media (min-width: 769px) {
+  nav {
+      display: none;
     }
-    @media (min-width: 769px) {
-      .sign-out-button {
-        display: block;
-      }
+
+  .side-nav {
+  display: block;
+  position: fixed;
+  top: var(--header-height);
+  bottom: 0;
+  left: 0;
+  width: var(--nav-bar-width);
+  background-color: fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  padding-top: 2rem;
+}
+
+.side-nav button {
+  background-color: #005EB8;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  border: none;
+  width: 100%;
+}
+
+  .side-nav nav,
+.side-nav button {
+  display: block;
+}
+
+.side-nav button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+  @media (min-width: 769px) {
+    .content {
+      padding-left: var(--nav-bar-width);
+    }
+    
+    .side-nav {
+      display: block; 
+    }
+
+    
+    .sign-out-button {
+      display: block;
+      background-color: #005EB8;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      border: none;
+      margin-top: auto;
+      width: 100%;
+      border-top: 1px solid #eee;
     }
   }
-  
-    .logo img {
-      max-height: 5rem;
-    width: auto;
-    padding-left: 1rem;
-    padding-right: 1rem; 
+  @media (min-width: 769px) {
+    .sign-out-button {
+      display: block;
     }
-  
-  
-  </style>
-  
-  <aside class="side-nav">
-    <nav>
-      <button on:click={() => handleButtonClick('gpRecord')}>MY GP RECORD</button>
-      <button on:click={() => handleButtonClick('myAppointments')}>APPOINTMENTS</button>
-      <button on:click={() => handleButtonClick('myPrescriptions')}>PRESCRIPTIONS</button>
-      <button on:click={() => handleButtonClick('myMessages')}>MESSAGES</button>
-    </nav>
-    <button class="sign-out-button" on:click={() => handleButtonClick('SignOut')}>SIGN OUT</button>
-  </aside>
-  
-  <header>
-    <button class="icon-button menu-button" on:click={toggleDropdown}>☰</button>
-    <ul class="dropdown-menu" class:show={showDropdown}>
+  }
+}
+
+  .logo img {
+    max-height: 5rem;
+  width: auto;
+  padding-left: 1rem;
+  padding-right: 1rem; 
+  }
+
+
+</style>
+
+<aside class="side-nav">
+  <nav>
+    <button on:click={() => handleButtonClick('gpRecord')}>MY GP RECORD</button>
+    <button on:click={() => handleButtonClick('myAppointments')}>APPOINTMENTS</button>
+    <button on:click={() => handleButtonClick('myPrescriptions')}>PRESCRIPTIONS</button>
+    <button on:click={() => handleButtonClick('myMessages')}>MESSAGES</button>
+  </nav>
+  <button class="sign-out-button" on:click={() => handleButtonClick('SignOut')}>SIGN OUT</button>
+</aside>
+
+<header>
+  <button class="icon-button menu-button" on:click={toggleDropdown}>☰</button>
+  <ul class="dropdown-menu" class:show={showDropdown}>
       <li class="dropdown-item" on:click={() => navigateTo('/patientPath/patient-home')}>Home</li>
       <li class="dropdown-item" on:click={() => navigateTo('/patientPath/gp-record')}>My GP Record</li>
       <li class="dropdown-item" on:click={() => navigateTo('/patientPath/my-appointments')}>Appointments</li>

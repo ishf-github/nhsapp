@@ -1,47 +1,76 @@
 <script>
+  import { onMount } from 'svelte';
+  import { supabase } from '../../../supabaseClient';
   import { writable } from 'svelte/store';
-  import { supabase } from '../../../supabaseClient'; // Adjust the path to your Supabase client
+  import { v4 as uuidv4 } from 'uuid'; // Import UUID library
 
   let selectedDate;
   let selectedTime;
   const showModal = writable(false);
-  let searchQuery = '';
-  let searchResults = writable([]);
-  let loading = writable(false);
+  let clinicians = [];
+  let selectedClinician = '';
 
   const gpSurgeryName = 'GP Surgery Name';
   const gpAddress = 'Line 1, Line 2, City, County, Postcode';
 
+  onMount(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('clinicians')
+        .select('clinician_id, first_name, last_name');
+
+      if (error) {
+        console.error('Error fetching clinicians:', error.message, error.hint, error.details);
+      } else if (data.length === 0) {
+        console.warn('No clinicians found. Make sure the table is populated.');
+      } else {
+        clinicians = data;
+        console.log('Fetched clinicians:', clinicians);
+      }
+    } catch (err) {
+      console.error('Error fetching data:', err.message);
+    }
+  });
+
+  async function saveAppointment() {
+    // Find the selected clinician
+    const clinician = clinicians.find(clin => `${clin.first_name} ${clin.last_name}` === selectedClinician);
+
+    if (!clinician) {
+      console.error('Clinician not found');
+      return;
+    }
+
+    const newAppointment = {
+      appointment_id: uuidv4(),
+      clinician_name: `${clinician.first_name} ${clinician.last_name}`,
+      clinician_id: clinician.clinician_id,
+      patient_name: null, // Replace with actual patient name if available
+      patient_id: null, // Replace with actual patient ID if available
+      appointment_date: selectedDate,
+      appointment_time: selectedTime,
+      appointment_type: 'phone', // Set appointment type to 'phone'
+      notes: null,
+      status: null
+    };
+
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .insert([newAppointment]);
+
+      if (error) {
+        console.error('Error saving appointment:', error.message, error.hint, error.details);
+      } else {
+        console.log('Appointment saved:', newAppointment);
+      }
+    } catch (err) {
+      console.error('Error inserting data:', err.message);
+    }
+  }
+
   function toggleModal() {
     showModal.update(n => !n);
-  }
-
-  function saveAppointment() {
-    console.log(`Appointment set for ${selectedDate} at ${selectedTime}`);
-  }
-
-  async function performSearch() {
-    loading.set(true);
-    const { data, error } = await supabase
-      .from('clinicians')
-      .select('first_name, last_name')
-      .ilike('first_name', `%${searchQuery}%`)
-      .or(`ilike(last_name, '%${searchQuery}%')`);
-
-    if (error) {
-      console.error('Error fetching clinicians:', error);
-      searchResults.set([]);
-    } else {
-      searchResults.set(data);
-    }
-    loading.set(false);
-    showModal.set(false);
-  }
-
-  function handleKeydown(event) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      toggleModal();
-    }
   }
 </script>
 
@@ -63,33 +92,18 @@
     margin: 0.25rem 0;
   }
 
-  .search-container {
+  .dropdown-container {
     display: flex;
     justify-content: center;
     margin-bottom: 1rem;
   }
 
-  .search-button {
-    display: inline-flex; 
-    align-items: center;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
-    color: inherit; 
-  }
-
-  .search-icon {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 50%;
+  .dropdown {
+    width: 100%;
     padding: 0.5rem;
-    margin-right: 0.5rem; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px; 
-    height: 30px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
   }
 
   .modal {
@@ -166,30 +180,6 @@
     max-width: 100%;
     box-sizing: border-box;
   }
-
-  .search-results {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  .search-results li {
-    padding: 0.5rem;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .search-results li:last-child {
-    border-bottom: none;
-  }
-
-  .search-results li:hover {
-    background-color: #f0f0f0;
-    cursor: pointer;
-  }
 </style>
 
 <div class="container">
@@ -198,20 +188,16 @@
     <p>{gpAddress}</p>
   </div>
 
-  <div class="search-container">
-    <button class="search-button" on:click={toggleModal}>
-      <div class="search-icon">🔍</div>
-      <span>Search for a Clinician</span>
-    </button>
+  <div class="dropdown-container">
+    <select class="dropdown" bind:value={selectedClinician}>
+      <option value="" disabled selected>Search for a Clinician</option>
+      {#each clinicians as clinician}
+        <option value="{clinician.first_name} {clinician.last_name}">
+          {clinician.first_name} {clinician.last_name}
+        </option>
+      {/each}
+    </select>
   </div>
-
-  {#if $showModal}
-    <div class="modal-bg show" on:click={toggleModal}></div>
-    <div class="modal show">
-      <input class="input-field" type="text" placeholder="Search..." bind:value={searchQuery}>
-      <button class="button-secondary" on:click={performSearch}>Search</button>
-    </div>
-  {/if}
 
   <div class="date-input">
     <label for="date">Select Date:</label>
@@ -224,13 +210,4 @@
   </div>
 
   <button class="button" on:click={saveAppointment}>Book appointment</button>
-
-  <!-- Display search results -->
-  {#if !$loading && $searchResults.length > 0}
-    <ul class="search-results">
-      {#each $searchResults as result}
-        <li>{result.first_name} {result.last_name}</li>
-      {/each}
-    </ul>
-  {/if}
 </div>
