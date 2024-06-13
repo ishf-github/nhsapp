@@ -15,7 +15,7 @@ export default async (req: any, res: any) => {
 
   // Check if the email already exists in the 'providers' table
   const { data: existingProvider, error: providerError } = await supabase
-    .from('providers')
+    .from('clinicians')
     .select('email')
     .eq('email', email)
     .single();

@@ -7,7 +7,7 @@
 
   onMount(async () => {
     const { data, error } = await supabase
-      .from('providers')
+      .from('clinicians')
       .select('*');
 
     if (error) console.log('Error:', error);

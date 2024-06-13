@@ -11,7 +11,7 @@
     if (page === 'patients') {
     goto('/patients');
   } else if (page === 'appointments') {
-    goto('/patientAppointments'); 
+    goto('/patient-appointments'); 
   } else if (page === 'messages') {
     goto('/messageList');
   } else if (page === 'prescriptions') {
