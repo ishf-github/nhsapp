@@ -1,39 +1,46 @@
 <script>
-    // import Button from "src/components/Button.svelte";
-    import { goto } from '$app/navigation';
-    
-    const handleClick = () => {
-        alert("Button clicked");
-    };
-  
-    
-    function handleAction(button) {
-      if (button === 'View Record') {
-        goto('/patientChart'); 
-      }
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { supabase } from '../../../supabaseClient';
 
-      if (button === 'Send Message') {
-        goto('/patientMessages'); 
+  let patients = [];
+
+  onMount(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('patients')
+        .select('first_name, last_name, date_of_birth, sex, nhs_number');
+
+      if (error) {
+        console.error('Error fetching patients:', error.message, error.hint, error.details);
+      } else if (data.length === 0) {
+        console.warn('No patients found. Make sure the table is populated.');
+      } else {
+        patients = data;
+        console.log('Fetched patients:', patients);
       }
+    } catch (err) {
+      console.error('Error fetching data:', err.message);
+    }
+  });
+
+  const handleClick = () => {
+    alert("Button clicked");
+  };
+
+  function handleAction(button) {
+    if (button === 'View Record') {
+      goto('/patientChart'); 
     }
 
-    const patients = [
-      //placeholder data for now
-      {
-        name: 'John Doe',
-        dob: '01/01/1990',
-        nextAppt: '01/01/2025',
-        tasks: 'Outstanding Tasks'
-      },
-      
-    ];
-
-  </script>
+    if (button === 'Send Message') {
+      goto('/patientMessages'); 
+    }
+  }
+</script>
 
 <style>
-    
-  
-    .patient-container {
+  .patient-container {
     display: flex;
     justify-content: space-between;
     margin-bottom: 16px;
@@ -61,11 +68,11 @@
     margin-top: 8px;
   }
 
-    .button {
-      margin-top: 8px; 
-    }
-  
-    .icon-round {
+  .button {
+    margin-top: 8px; 
+  }
+
+  .icon-round {
     position: fixed;
     bottom: 64px; 
     right: 20px; 
@@ -81,29 +88,26 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
-  
-  </style>
-  
-  <div class="patients-page">
-  
-    {#each patients as patient}
-      <div class="patient-container">
-        <div class="patient-info">
-            <h2>{patient.name}</h2>
-            <p>Dob: {patient.dob}</p>
-            <p>Next Appt: {patient.nextAppt}</p>
-            <p>{patient.tasks}</p>
-            <button class="button" on:click={() => handleAction('View Tasks')}>VIEW</button>
-        </div>
-        <div class="patient-actions">
-            <button class="cta-button" on:click={() => handleAction('View Record')}>VIEW RECORD</button>
-            <button class="cta-button" on:click={() => handleAction('Send Message')}>SEND MESSAGE</button>
-            <button class="cta-button" on:click={() => handleAction('Schedule Appt')}>SCHEDULE APPT</button>
-            <button class="cta-button" on:click={() => handleAction('Refer')}>REFER</button>
-        </div>
-        </div>
-    {/each}
-  
-    <button class="icon-button icon-round" on:click={() => handleAction('notes')}>NOTES</button>
+</style>
 
+<div class="patients-page">
+  {#each patients as patient}
+    <div class="patient-container">
+      <div class="patient-info">
+        <h2>{patient.first_name} {patient.last_name}</h2>
+        <p>Dob: {new Date(patient.date_of_birth).toLocaleDateString()}</p>
+        <p>Sex: {patient.sex}</p>
+        <p>NHS Number: {patient.nhs_number}</p>
+        <button class="button" on:click={() => handleAction('View Tasks')}>VIEW</button>
+      </div>
+      <div class="patient-actions">
+        <button class="cta-button" on:click={() => handleAction('View Record')}>VIEW RECORD</button>
+        <button class="cta-button" on:click={() => handleAction('Send Message')}>SEND MESSAGE</button>
+        <button class="cta-button" on:click={() => handleAction('Schedule Appt')}>SCHEDULE APPT</button>
+        <button class="cta-button" on:click={() => handleAction('Refer')}>REFER</button>
+      </div>
+    </div>
+  {/each}
+
+  <button class="icon-button icon-round" on:click={() => handleAction('notes')}>NOTES</button>
 </div>

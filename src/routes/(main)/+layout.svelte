@@ -14,8 +14,8 @@
     switch(action) {
       case 'Home': goto('/'); break;
       case 'Patients': goto('/patients'); break;
-      case 'Appointments': goto('/patientAppointments'); break;
-      case 'Messages': goto('/messageList'); break;
+      case 'Appointments': goto('/patient-appointments'); break;
+      case 'Messages': goto('/message-list'); break;
       case 'Tasks': goto('/tasks'); break;
       case 'Referrals': goto('/referrals'); break;
       case 'Prescriptions': goto('/prescriptions'); break;
@@ -371,10 +371,10 @@
   <ul class="dropdown-menu" class:show={showDropdown}>
     <li class="dropdown-item" on:click={() => navigateTo('/')}>Home</li>
     <li class="dropdown-item" on:click={() => navigateTo('/patients')}>Patients</li>
-    <li class="dropdown-item" on:click={() => navigateTo('/patientAppointments')}>Appointments</li>
+    <li class="dropdown-item" on:click={() => navigateTo('/patient-appointments')}>Appointments</li>
     <li class="dropdown-item" on:click={() => navigateTo('/referrals')}>Referrals</li>
     <li class="dropdown-item" on:click={() => navigateTo('/prescriptions')}>Prescriptions</li>
-    <li class="dropdown-item" on:click={() => navigateTo('/messageList')}>Messages</li>
+    <li class="dropdown-item" on:click={() => navigateTo('/message-list')}>Messages</li>
     <li class="dropdown-item" on:click={() => navigateTo('/tasks')}>Tasks</li>
     <li class="dropdown-item" on:click={() => navigateTo('/signout')}>Sign Out</li>
   </ul>
