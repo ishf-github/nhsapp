@@ -13,7 +13,7 @@
   } else if (page === 'appointments') {
     goto('/patient-appointments'); 
   } else if (page === 'messages') {
-    goto('/messageList');
+    goto('/message-list');
   } else if (page === 'prescriptions') {
     goto('/prescriptions');
   } else if (page === 'referrals') {

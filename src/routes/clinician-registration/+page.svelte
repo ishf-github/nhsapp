@@ -1,47 +1,77 @@
 <script>
   import { goto } from '$app/navigation'; 
   import { supabase } from '../../supabaseClient';
+  import { onMount } from 'svelte';
 
+  let firstName = '';
+  let surname = '';
+  let dateOfBirth = '';
+  let gender = '';
+  let nhsNumber = '';
   let email = '';
+  let phoneNumber = '';
+  let address = '';
+  let department = '';
+  let emergencyContactName = '';
+  let emergencyContactPhone = '';
   let password = '';
   let confirmPassword = '';
   let errorMessage = '';
 
-  const generateVerificationCode = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); // Generates a 6-digit code
-  };
-
-  /**
-   * Generates a random integer between the specified min and max values.
-   * @param {number} min - The minimum value.
-   * @param {number} max - The maximum value.
-   * @returns {number} - A random integer between min and max.
-   */
-  const generateRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
+  let departments = [];
 
   const handleRegistration = async () => {
-    
-    const { data, error } = await supabase.auth.signUp(
-  {
-    email: email,
-    password: password,
-    options: {
-      data: {
-        provider: true,
-      }
+    if (password !== confirmPassword) {
+      errorMessage = "Passwords do not match";
+      return;
     }
-  }
-)
-    console.log("data:",data)
-    console.log("error:",error)
 
+    const { data, error } = await supabase.auth.signUp(
+      {
+        email: email,
+        password: password,
+        options: {
+          data: {
+            provider: true,
+            first_name: firstName,
+            surname: surname,
+            date_of_birth: dateOfBirth,
+            gender: gender,
+            nhs_number: nhsNumber,
+            phone_number: phoneNumber,
+            address: address,
+            department: department,
+            emergency_contact_name: emergencyContactName,
+            emergency_contact_phone: emergencyContactPhone
+          }
+        }
+      }
+    );
+
+    if (error) {
+      console.log("Error:", error);
+      errorMessage = error.message;
+    } else {
+      console.log("Registration successful:", data);
+      navigateToSignIn();
+    }
   };
 
   const navigateToSignIn = () => {
     goto('../clinician-signin');
   };
+
+  onMount(async () => {
+    const { data: departmentData, error } = await supabase
+      .from('department_list')
+      .select('department_name');
+    
+    if (error) {
+      console.log("Error fetching departments:", error);
+    } else {
+      departments = departmentData;
+    }
+  });
 </script>
 
 <style>
@@ -75,7 +105,7 @@
     margin-bottom: 1rem;
   }
 
-  input {
+  input, select {
     width: 100%;
     padding: 10px;
     margin-bottom: 1rem;
@@ -121,7 +151,47 @@
           <p class="error-message" style="color: red;">{errorMessage}</p>
       {/if}
       <div class="input-container">
+          <input type="text" bind:value={firstName} placeholder="First Name">
+      </div>
+      <div class="input-container">
+          <input type="text" bind:value={surname} placeholder="Surname">
+      </div>
+      <div class="input-container">
+          <input type="date" bind:value={dateOfBirth} placeholder="Date of Birth">
+      </div>
+      <div class="input-container">
+          <select bind:value={gender}>
+            <option value="" disabled selected>Gender</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+          </select>
+      </div>
+      <div class="input-container">
+          <input type="text" bind:value={nhsNumber} placeholder="NHS Number">
+      </div>
+      <div class="input-container">
           <input type="email" bind:value={email} placeholder="Email">
+      </div>
+      <div class="input-container">
+          <input type="text" bind:value={phoneNumber} placeholder="Phone Number">
+      </div>
+      <div class="input-container">
+          <input type="text" bind:value={address} placeholder="Address">
+      </div>
+      <div class="input-container">
+          <select bind:value={department}>
+            <option value="" disabled selected>Select a department</option>
+            {#each departments as dept}
+              <option value={dept.department_name}>{dept.department_name}</option>
+            {/each}
+          </select>
+      </div>
+      <div class="input-container">
+          <input type="text" bind:value={emergencyContactName} placeholder="Emergency Contact Name">
+      </div>
+      <div class="input-container">
+          <input type="text" bind:value={emergencyContactPhone} placeholder="Emergency Contact Phone">
       </div>
       <div class="input-container">
           <input type="password" bind:value={password} placeholder="Password">
@@ -132,6 +202,6 @@
       <button class="registration-button" on:click={handleRegistration}>Agree and continue</button>
       <div class="switch-user" on:click={navigateToSignIn} role="button" tabindex="0" on:keydown={navigateToSignIn}>
         Already registered? Sign in here
-    </div>    
+      </div>    
   </div>
 </div>

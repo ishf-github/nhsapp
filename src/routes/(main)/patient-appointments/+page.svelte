@@ -1,22 +1,19 @@
 <script>
   import { onMount } from 'svelte';
-  import Button from "../../../components/Button.svelte";
-  import { goto } from '$app/navigation';
   import { supabase } from '../../../supabaseClient';
-  import { checkClinicianAuth } from '../../../utils/auth';
+  import { goto } from '$app/navigation';
 
   let appointments = [];
 
   onMount(async () => {
     try {
-      // Fetch appointments data
-      const { data: appointmentsData, error: appointmentsError } = await supabase
+      const { data, error } = await supabase
         .from('appointments')
         .select(`
           appointment_id,
           appointment_date,
           appointment_time,
-          patient_id,
+          status,
           patients (
             first_name,
             last_name,
@@ -24,22 +21,19 @@
             nhs_number
           )
         `);
-
-      if (appointmentsError) {
-        console.error('Error fetching appointments:', appointmentsError.message, appointmentsError.hint, appointmentsError.details);
-      } else if (appointmentsData.length === 0) {
-        console.warn('No appointments found. Make sure the table is populated.');
+      
+      if (error) {
+        console.error("Error fetching appointments:", error.message, error.hint, error.details);
       } else {
-        appointments = appointmentsData.map(appt => ({
+        appointments = data.map(appt => ({
           id: appt.appointment_id,
           name: `${appt.patients.first_name} ${appt.patients.last_name}`,
-          dob: new Date(appt.patients.date_of_birth).toLocaleDateString(),
+          dob: appt.patients.date_of_birth,
           nhsNumber: appt.patients.nhs_number,
-          nextAppt: new Date(appt.appointment_date).toLocaleDateString(),
-          appointmentTime: appt.appointment_time,
-          tasks: 'Outstanding Tasks' // Placeholder for tasks
+          nextAppt: appt.appointment_date,
+          time: appt.appointment_time,
+          status: appt.status
         }));
-        console.log('Fetched appointments:', appointments);
       }
     } catch (err) {
       console.error('Error fetching data:', err.message);
@@ -122,19 +116,19 @@
 </style>
 
 <div class="appointments-page">
-  <button class="cta-button" on:click={() => navigateTo('appointment-booking')}>New Appointment</button>
   {#each appointments as appointment (appointment.id)}
     <div class="appointment-container">
       <div class="appointment-info">
+        <button class="cta-button" on:click={() => navigateTo('appointment-booking')}>New Appointment</button>
         <div class="appointment-details">
           <h2>{appointment.name}</h2>
           <p>DoB: {appointment.dob}</p>
           <p>NHS Number: {appointment.nhsNumber}</p>
-          <p>Next Appt: {appointment.nextAppt} at {appointment.appointmentTime}</p>
+          <p>Next Appt: {appointment.nextAppt} {appointment.time}</p>
         </div>
         <div class="tasks-section">
           <p class="task-status">
-            {#if appointment.tasks}
+            {#if appointment.status === 'Outstanding'}
               Outstanding Tasks: <button class="cta-button" on:click={() => viewTasks(appointment.id)}>VIEW</button>
             {:else}
               No outstanding tasks
