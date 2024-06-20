@@ -32,7 +32,6 @@
       } else if (data.length === 0) {
         inboxEmpty = true;
       } else {
-        // Filter to only show the most recent message per sender-receiver pair
         const messageMap = new Map();
         data.forEach(message => {
           const key = message.sender_clinician_id || message.sender_patient_id + '-' + message.receiver_clinician_id || message.receiver_patient_id;
