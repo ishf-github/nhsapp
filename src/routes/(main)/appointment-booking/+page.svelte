@@ -46,7 +46,7 @@
       clinician_name: `${clinician.first_name} ${clinician.last_name}`,
       clinician_id: clinician.clinician_id,
       patient_name: `${patient.first_name} ${patient.last_name}`,
-      patient_id: patient.user_id,
+      patient_id: patient.patient_id,
       appointment_date: selectedDate,
       appointment_time: selectedTime,
       status: 'booked'

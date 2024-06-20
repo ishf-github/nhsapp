@@ -14,8 +14,8 @@
     goto('/patient-appointments'); 
   } else if (page === 'messages') {
     goto('/message-list');
-  } else if (page === 'prescriptions') {
-    goto('/prescriptions');
+  } else if (page === 'medication') {
+    goto('/medication');
   } else if (page === 'referrals') {
     goto('/referrals');
   } else if (page === 'tasks') {
@@ -132,7 +132,7 @@
     <Button text="TASKS" action={() => navigateTo('tasks')} />
       <Button text="APPOINTMENTS" action={() => navigateTo('appointments')} />
       <Button text="MESSAGES" action={() => navigateTo('messages')} />
-      <Button text="PRESCRIPTIONS" action={() => navigateTo('prescriptions')} />
+      <Button text="MEDICATION" action={() => navigateTo('medication')} />
       <Button text="REFERRALS" action={() => navigateTo('referrals')} />
       <Button text="PATIENTS" action={() => navigateTo('patients')} />
   </div>

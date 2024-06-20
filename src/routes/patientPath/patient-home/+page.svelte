@@ -36,7 +36,7 @@
       const { data, error } = await supabase
         .from('patients')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('patient_id', user.id)
         .single();
 
       if (error) {

@@ -69,7 +69,8 @@
           email: user.email,
           emergency_contact_name: emergencyContactName,
           emergency_contact_phone: emergencyContactNumber,
-          sex: sex
+          sex: sex,
+          patient_id: user.id  // Use patient_id instead of user_id
         }
       ]);
 

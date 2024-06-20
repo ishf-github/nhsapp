@@ -1,7 +1,7 @@
 <script>
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
-  import { supabase } from '../../supabaseClient.js';  
+  import { supabase } from '../../supabaseClient.js';
 
   let email = '';
   let password = '';
@@ -16,19 +16,21 @@
     console.log("error:", error);
 
     if (data.user && data.session) {
-      
       const { user } = data;
       const { data: userData, error: userError } = await supabase
         .from('patients')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('patient_id', user.id)
         .single();
 
       if (userError && userError.code !== 'PGRST116') {
         console.error("Error fetching user data:", userError);
       } else if (!userData) {
-       
-        const { firstName, lastName, dateOfBirth, sex, nhsNumber, addressLine1, addressLine2, city, postcode, phoneNumber, emergencyContactName, emergencyContactNumber } = user.user_metadata;
+        const {
+          firstName, lastName, dateOfBirth, sex, nhsNumber, addressLine1,
+          addressLine2, city, postcode, phoneNumber, emergencyContactName,
+          emergencyContactNumber
+        } = user.user_metadata;
 
         const { data: insertData, error: insertError } = await supabase
           .from('patients')
@@ -43,7 +45,7 @@
             emergency_contact_name: emergencyContactName,
             emergency_contact_phone: emergencyContactNumber,
             email: user.email,
-            user_id: user.id 
+            patient_id: user.id 
           }]);
 
         if (insertError) {
@@ -161,7 +163,7 @@
       Forgot password?
     </div>
     <div class="switch-user" on:click={navigateToProviderSignIn}>
-      Provider? Sign in here
+      Clinician? Sign in here
     </div>
   </div>
 </div>

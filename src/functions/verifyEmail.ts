@@ -34,7 +34,7 @@ export default async (req: any, res: any) => {
 
   // Insert the new verification entry
   const { data, error } = await supabase
-    .from('provider-verification')
+    .from('clinician-verification')
     .insert([{
       provider_id: newProviderId,
       verification_code: verificationCode,

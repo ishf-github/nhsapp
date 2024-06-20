@@ -376,7 +376,7 @@
     <li class="dropdown-item" on:click={() => navigateTo('/prescriptions')}>Prescriptions</li>
     <li class="dropdown-item" on:click={() => navigateTo('/message-list')}>Messages</li>
     <li class="dropdown-item" on:click={() => navigateTo('/tasks')}>Tasks</li>
-    <li class="dropdown-item" on:click={() => navigateTo('/provider-signin')}>Sign Out</li>
+    <li class="dropdown-item" on:click={() => navigateTo('/clinician-signin')}>Sign Out</li>
   </ul>
   <div class="logo" role="button" tabindex="0" on:click={navigateHome} on:keydown={(event) => handleKeydown(event, 'Home')}>
     <img src="src/myNHS Logo.png" alt="Logo">
