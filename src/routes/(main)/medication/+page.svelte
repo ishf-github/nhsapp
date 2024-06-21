@@ -3,11 +3,13 @@
   import { supabase } from '../../../supabaseClient'; // Adjust the path as necessary
 
   let medications = [];
+  let showModal = false;
+  let selectedMedication = {};
 
   async function fetchMedications() {
     let { data, error } = await supabase
       .from('medication')
-      .select('medication_id, name, brand_name, strength, dosage_instructions');
+      .select('medication_id, name, brand_name, description, form, strength, conditions_treated, side_effects, dosage_instructions');
 
     if (error) {
       console.error('Error fetching medications:', error);
@@ -17,12 +19,18 @@
   }
 
   function selectMedication(medicationId) {
-    console.log('Selected medication ID:', medicationId);
+    selectedMedication = medications.find(med => med.medication_id === medicationId);
+    showModal = true;
   }
 
   onMount(() => {
     fetchMedications();
   });
+
+  function closeModal() {
+    showModal = false;
+    selectedMedication = {};
+  }
 </script>
 
 <style>
@@ -68,6 +76,39 @@
     cursor: pointer;
     text-align: center;
   }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
 </style>
 
 <div class="medication-container">
@@ -82,8 +123,28 @@
         </div>
       </div>
       <button class="select-button" on:click={() => selectMedication(medication.medication_id)}>
-        SELECT
+        Info
       </button>
     </div>
   {/each}
+
+  {#if showModal}
+    <div class="modal" on:click={closeModal}>
+      <div class="modal-content" on:click|stopPropagation>
+        <div class="modal-header">
+          <h2>{selectedMedication.name}</h2>
+          <button class="close-button" on:click={closeModal}>&times;</button>
+        </div>
+        <div class="modal-body">
+          <div><strong>Brand:</strong> {selectedMedication.brand_name}</div>
+          <div><strong>Description:</strong> {selectedMedication.description}</div>
+          <div><strong>Form:</strong> {selectedMedication.form}</div>
+          <div><strong>Strength:</strong> {selectedMedication.strength}</div>
+          <div><strong>Conditions Treated:</strong> {selectedMedication.conditions_treated}</div>
+          <div><strong>Side Effects:</strong> {selectedMedication.side_effects}</div>
+          <div><strong>Dosage Instructions:</strong> {selectedMedication.dosage_instructions}</div>
+        </div>
+      </div>
+    </div>
+  {/if}
 </div>
