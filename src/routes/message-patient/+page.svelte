@@ -5,6 +5,7 @@
   import { supabase } from '../../supabaseClient';
 
   export let receiverId = '';
+  export let senderId = '';
 
   let content = '';
   let messages = [];
@@ -16,12 +17,14 @@
       if (session && session.user) {
         currentUser = session.user;
 
-        // Check if receiverId is provided via URL parameters
+        // Check if receiverId and senderId are provided via URL parameters
         const params = new URLSearchParams(window.location.search);
         receiverId = params.get('receiverId') || receiverId;
+        senderId = params.get('senderId') || senderId;
         console.log('Fetched receiverId:', receiverId);
+        console.log('Fetched senderId:', senderId);
 
-        messages = await fetchMessages(currentUser.id, receiverId);
+        messages = await fetchMessages(senderId, receiverId);
       }
     } catch (err) {
       console.error('Unexpected error fetching messages:', err);
@@ -33,10 +36,10 @@
       if (content.trim() !== '') {
         const senderType = 'clinician'; // Since it's always the clinician sending messages in this component
         console.log('Sending message:');
-        console.log('Sender ID:', currentUser.id);
+        console.log('Sender ID:', senderId);
         console.log('Receiver ID:', receiverId);
-        await sendMessage(currentUser.id, receiverId, content, senderType);
-        messages = await fetchMessages(currentUser.id, receiverId);
+        await sendMessage(senderId, receiverId, content, senderType);
+        messages = await fetchMessages(senderId, receiverId);
         content = ''; 
       }
     } catch (err) {

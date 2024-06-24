@@ -33,13 +33,37 @@
         inboxEmpty = true;
       } else {
         const messageMap = new Map();
-        data.forEach(message => {
-          const key = message.sender_clinician_id || message.sender_patient_id + '-' + message.receiver_clinician_id || message.receiver_patient_id;
+        for (const message of data) {
+          const senderId = message.sender_clinician_id || message.sender_patient_id;
+          const receiverId = message.receiver_clinician_id || message.receiver_patient_id;
+          const key = senderId < receiverId ? `${senderId}-${receiverId}` : `${receiverId}-${senderId}`;
           if (!messageMap.has(key)) {
             messageMap.set(key, message);
           }
-        });
-        messages = Array.from(messageMap.values());
+        }
+
+        messages = await Promise.all(Array.from(messageMap.values()).map(async message => {
+          const otherUserId = message.sender_clinician_id === currentUser.id || message.sender_patient_id === currentUser.id
+            ? (message.receiver_clinician_id || message.receiver_patient_id)
+            : (message.sender_clinician_id || message.sender_patient_id);
+
+          const { data: patientData, error: patientError } = await supabase
+            .from('patients')
+            .select('first_name, last_name')
+            .eq('patient_id', otherUserId)
+            .single();
+
+          if (patientError) {
+            console.error('Error fetching patient info:', patientError.message, patientError.details);
+            return { ...message, patientName: 'Unknown' };
+          }
+
+          return {
+            ...message,
+            patientName: `${patientData.first_name} ${patientData.last_name}`
+          };
+        }));
+
         inboxEmpty = false;
       }
     } catch (err) {
@@ -120,9 +144,10 @@
     <div class="inbox-empty">Inbox is empty</div>
   {:else}
     <div class="message-list">
-      {#each messages as message (message.id)}
+      {#each messages as message (message.message_id)}
         <div class="message-container">
           <div>
+            <div><strong>{message.patientName}</strong></div>
             <div>{message.sender_clinician_id === currentUser.id || message.sender_patient_id === currentUser.id ? 'You' : (message.sender_clinician_id || message.sender_patient_id)}</div>
             <div class="message-preview">{message.content}</div>
           </div>

@@ -1,12 +1,43 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { supabase } from '../../../supabaseClient';
   import { goto } from '$app/navigation';
 
-  let appointments = [];
+  interface Patient {
+    patient_id: string;
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    nhs_number: string;
+  }
+
+  interface Appointment {
+    appointment_id: string;
+    appointment_date: string;
+    appointment_time: string;
+    status: string;
+    patients: Patient;
+  }
+
+  let appointments: Array<{
+    id: string;
+    patientId: string;
+    name: string;
+    dob: string;
+    nhsNumber: string;
+    nextAppt: string;
+    time: string;
+    status: string;
+  }> = [];
+  let currentUser = null;
 
   onMount(async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+      }
+
       const { data, error } = await supabase
         .from('appointments')
         .select(`
@@ -15,18 +46,22 @@
           appointment_time,
           status,
           patients (
+            patient_id,
             first_name,
             last_name,
             date_of_birth,
             nhs_number
           )
-        `);
-      
+        `)
+        .order('appointment_date', { ascending: true });
+
       if (error) {
         console.error("Error fetching appointments:", error.message, error.hint, error.details);
       } else {
-        appointments = data.map(appt => ({
+        // Ensure that each row is handled correctly
+        appointments = (data as Appointment[]).map(appt => ({
           id: appt.appointment_id,
+          patientId: appt.patients.patient_id,
           name: `${appt.patients.first_name} ${appt.patients.last_name}`,
           dob: appt.patients.date_of_birth,
           nhsNumber: appt.patients.nhs_number,
@@ -40,13 +75,24 @@
     }
   });
 
-  function viewRecord(id) { /* ... */ }
-  function sendMessage(id) { /* ... */ }
-  function manageAppt(id) { /* ... */ }
-  function viewTasks(id) { /* ... */ }
-  function bookAppt(id) { /* ... */ }
+  function viewRecord(patientId: string) {
+    goto(`/patient-chart?patientId=${patientId}`);
+  }
 
-  function navigateTo(page) {
+  function sendMessage(patientId: string) {
+    if (currentUser) {
+      const url = `/message-patient?receiverId=${patientId}&senderId=${currentUser.id}`;
+      window.open(url, '_blank', 'width=800,height=600,noopener,noreferrer');
+    } else {
+      console.error('Current user is not defined.');
+    }
+  }
+
+  function manageAppt(id: string) { /* ... */ }
+  function viewTasks(id: string) { /* ... */ }
+  function bookAppt(id: string) { /* ... */ }
+
+  function navigateTo(page: string) {
     if (page === 'notes') {
       goto('../notes');
     } else if (page === 'appointment-booking') {
@@ -137,8 +183,8 @@
         </div>
       </div>
       <div class="appointment-actions">
-        <button class="cta-button" on:click={() => viewRecord(appointment.id)}>VIEW RECORD</button>
-        <button class="cta-button" on:click={() => sendMessage(appointment.id)}>SEND MESSAGE</button>
+        <button class="cta-button" on:click={() => viewRecord(appointment.patientId)}>VIEW RECORD</button>
+        <button class="cta-button" on:click={() => sendMessage(appointment.patientId)}>SEND MESSAGE</button>
         <button class="cta-button" on:click={() => manageAppt(appointment.id)}>MANAGE APPT</button>
         <button class="cta-button" on:click={() => bookAppt(appointment.id)}>BOOK APPT</button>
       </div>

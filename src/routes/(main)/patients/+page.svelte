@@ -4,12 +4,18 @@
   import { supabase } from '../../../supabaseClient';
 
   let patients = [];
+  let currentUser = null;
 
   onMount(async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+      }
+
       const { data, error } = await supabase
         .from('patients')
-        .select('first_name, last_name, date_of_birth, sex, nhs_number');
+        .select('patient_id, first_name, last_name, date_of_birth, sex, nhs_number');
 
       if (error) {
         console.error('Error fetching patients:', error.message, error.hint, error.details);
@@ -24,17 +30,18 @@
     }
   });
 
-  const handleClick = () => {
-    alert("Button clicked");
-  };
-
-  function handleAction(button) {
+  function handleAction(button, patientId) {
     if (button === 'View Record') {
-      goto('/patientChart'); 
+      goto(`/patient-chart?patientId=${patientId}`); 
     }
 
     if (button === 'Send Message') {
-      goto('/patientMessages'); 
+      if (currentUser) {
+        const url = `/message-patient?receiverId=${patientId}&senderId=${currentUser.id}`;
+        window.open(url, '_blank', 'width=800,height=600,noopener,noreferrer');
+      } else {
+        console.error('Current user is not defined.');
+      }
     }
   }
 </script>
@@ -98,13 +105,13 @@
         <p>Dob: {new Date(patient.date_of_birth).toLocaleDateString()}</p>
         <p>Sex: {patient.sex}</p>
         <p>NHS Number: {patient.nhs_number}</p>
-        <button class="button" on:click={() => handleAction('View Tasks')}>VIEW</button>
+        <button class="button" on:click={() => handleAction('View Tasks', patient.patient_id)}>VIEW</button>
       </div>
       <div class="patient-actions">
-        <button class="cta-button" on:click={() => handleAction('View Record')}>VIEW RECORD</button>
-        <button class="cta-button" on:click={() => handleAction('Send Message')}>SEND MESSAGE</button>
-        <button class="cta-button" on:click={() => handleAction('Schedule Appt')}>SCHEDULE APPT</button>
-        <button class="cta-button" on:click={() => handleAction('Refer')}>REFER</button>
+        <button class="cta-button" on:click={() => handleAction('View Record', patient.patient_id)}>VIEW RECORD</button>
+        <button class="cta-button" on:click={() => handleAction('Send Message', patient.patient_id)}>SEND MESSAGE</button>
+        <button class="cta-button" on:click={() => handleAction('Schedule Appt', patient.patient_id)}>SCHEDULE APPT</button>
+        <button class="cta-button" on:click={() => handleAction('Refer', patient.patient_id)}>REFER</button>
       </div>
     </div>
   {/each}
