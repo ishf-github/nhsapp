@@ -4,80 +4,60 @@
   import { supabase } from '../../../supabaseClient';
 
   let patient = {
-    name: 'NAME SURNAME',
-    dob: '01/01/1991',
-    nhsNumber: '000 000 0000',
-    address: 'Line 1, Line 2, City, County, Postcode'
+    first_name: '',
+    last_name: '',
+    date_of_birth: '',
+    nhs_number: '',
+    address: '',
+    phone_number: '',
+    email: '',
+    emergency_contact_name: '',
+    emergency_contact_phone: ''
   };
 
   let counts = {
-    allergies: 0,
-    medicines: 0,
-    immunisations: 0,
-    conditions: 0,
-    results: 0,
     appointments: 0,
-    documents: 0
+    referrals: 0,
+    prescriptions: 0
   };
 
   onMount(async () => {
     try {
-      const { data: patientData, error: patientError } = await supabase
-        .from('patients')
-        .select('name, dob, nhsNumber, address')
-        .eq('id', 1) // Replace with the actual patient ID
-        .single();
-      if (patientError) throw patientError;
-      patient = patientData;
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      
+      if (session && session.user) {
+        const patientId = session.user.id;
 
-      const { data: allergiesCount, error: allergiesError } = await supabase
-        .from('allergies')
-        .select('id', { count: 'exact' })
-        .eq('patient_id', 1); // Replace with the actual patient ID
-      if (allergiesError) throw allergiesError;
-      counts.allergies = allergiesCount.length;
+        const { data: patientData, error: patientError } = await supabase
+          .from('patients')
+          .select('first_name, last_name, date_of_birth, nhs_number, address, phone_number, email, emergency_contact_name, emergency_contact_phone')
+          .eq('patient_id', patientId)
+          .single();
+        if (patientError) throw patientError;
+        patient = patientData;
 
-      const { data: medicinesCount, error: medicinesError } = await supabase
-        .from('medicines')
-        .select('id', { count: 'exact' })
-        .eq('patient_id', 1); // Replace with the actual patient ID
-      if (medicinesError) throw medicinesError;
-      counts.medicines = medicinesCount.length;
+        const { data: appointmentsData, error: appointmentsError } = await supabase
+          .from('appointments')
+          .select('appointment_id', { count: 'exact' })
+          .eq('patient_id', patientId);
+        if (appointmentsError) throw appointmentsError;
+        counts.appointments = appointmentsData.length;
 
-      const { data: immunisationsCount, error: immunisationsError } = await supabase
-        .from('immunisations')
-        .select('id', { count: 'exact' })
-        .eq('patient_id', 1); // Replace with the actual patient ID
-      if (immunisationsError) throw immunisationsError;
-      counts.immunisations = immunisationsCount.length;
+        const { data: referralsData, error: referralsError } = await supabase
+          .from('referrals')
+          .select('referral_id', { count: 'exact' })
+          .eq('patient_id', patientId);
+        if (referralsError) throw referralsError;
+        counts.referrals = referralsData.length;
 
-      const { data: conditionsCount, error: conditionsError } = await supabase
-        .from('conditions')
-        .select('id', { count: 'exact' })
-        .eq('patient_id', 1); // Replace with the actual patient ID
-      if (conditionsError) throw conditionsError;
-      counts.conditions = conditionsCount.length;
-
-      const { data: resultsCount, error: resultsError } = await supabase
-        .from('results')
-        .select('id', { count: 'exact' })
-        .eq('patient_id', 1); // Replace with the actual patient ID
-      if (resultsError) throw resultsError;
-      counts.results = resultsCount.length;
-
-      const { data: appointmentsCount, error: appointmentsError } = await supabase
-        .from('appointments')
-        .select('id', { count: 'exact' })
-        .eq('patient_id', 1); // Replace with the actual patient ID
-      if (appointmentsError) throw appointmentsError;
-      counts.appointments = appointmentsCount.length;
-
-      const { data: documentsCount, error: documentsError } = await supabase
-        .from('documents')
-        .select('id', { count: 'exact' })
-        .eq('patient_id', 1); // Replace with the actual patient ID
-      if (documentsError) throw documentsError;
-      counts.documents = documentsCount.length;
+        const { data: prescriptionsData, error: prescriptionsError } = await supabase
+          .from('prescriptions')
+          .select('prescription_id', { count: 'exact' })
+          .eq('patient_id', patientId);
+        if (prescriptionsError) throw prescriptionsError;
+        counts.prescriptions = prescriptionsData.length;
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -162,47 +142,35 @@
 
 <div class="container">
   <div class="section">
-    <div class="header">{patient.name}</div>
-    <div class="info">DoB: {new Date(patient.dob).toLocaleDateString('en-GB')}</div>
-    <div class="info">NHS Number: {patient.nhsNumber}</div>
+    <div class="header">{patient.first_name} {patient.last_name}</div>
+    <div class="info">DoB: {new Date(patient.date_of_birth).toLocaleDateString('en-GB')}</div>
+    <div class="info">NHS Number: {patient.nhs_number}</div>
   </div>
 
   <div class="section">
     <div class="subheader">Contact Details:</div>
     <div class="info">Address:</div>
     <div class="info">{patient.address}</div>
+    <div class="info">Phone Number: {patient.phone_number}</div>
+    <div class="info">Email: {patient.email}</div>
+    <div class="info">Emergency Contact Name: {patient.emergency_contact_name}</div>
+    <div class="info">Emergency Contact Phone: {patient.emergency_contact_phone}</div>
   </div>
 
   <div class="section">
     <div class="subheader">Medical Information:</div>
     <div class="buttons">
-      <button class="button" on:click={() => navigateTo('my-allergies')}>
-        <span>Allergies and adverse reactions</span>
-        <span>{counts.allergies} <span class="arrow">→</span></span>
-      </button>
-      <button class="button" on:click={() => navigateTo('my-prescriptions')}>
-        <span>Medicines</span>
-        <span>{counts.medicines} <span class="arrow">→</span></span>
-      </button>
-      <button class="button" on:click={() => navigateTo('my-immunisations')}>
-        <span>Immunisations</span>
-        <span>{counts.immunisations} <span class="arrow">→</span></span>
-      </button>
-      <button class="button" on:click={() => navigateTo('my-conditions')}>
-        <span>Health conditions</span>
-        <span>{counts.conditions} <span class="arrow">→</span></span>
-      </button>
-      <button class="button" on:click={() => navigateTo('my-tests')}>
-        <span>Test results</span>
-        <span>{counts.results} <span class="arrow">→</span></span>
-      </button>
       <button class="button" on:click={() => navigateTo('view-appointments')}>
-        <span>Upcoming and past appts</span>
+        <span>Upcoming and past appointments</span>
         <span>{counts.appointments} <span class="arrow">→</span></span>
       </button>
-      <button class="button" on:click={() => navigateTo('my-documents')}>
-        <span>Documents</span>
-        <span>{counts.documents} <span class="arrow">→</span></span>
+      <button class="button" on:click={() => navigateTo('my-referrals')}>
+        <span>Referrals</span>
+        <span>{counts.referrals} <span class="arrow">→</span></span>
+      </button>
+      <button class="button" on:click={() => navigateTo('my-prescriptions')}>
+        <span>Prescriptions</span>
+        <span>{counts.prescriptions} <span class="arrow">→</span></span>
       </button>
     </div>
   </div>

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { supabase } from '../../../supabaseClient'; // Adjust the path as necessary
+  import { supabase } from '../../../supabaseClient'; 
 
   let medications = [];
   let showModal = false;

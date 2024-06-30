@@ -95,8 +95,8 @@
   function navigateTo(page: string) {
     if (page === 'notes') {
       goto('../notes');
-    } else if (page === 'appointment-booking') {
-      goto('../appointment-booking');
+    } else if (page === 'appointment-booking-search') {
+      goto('../appointment-booking-search');
     }
   }
 </script>
@@ -165,7 +165,7 @@
   {#each appointments as appointment (appointment.id)}
     <div class="appointment-container">
       <div class="appointment-info">
-        <button class="cta-button" on:click={() => navigateTo('appointment-booking')}>New Appointment</button>
+        <button class="cta-button" on:click={() => navigateTo('appointment-booking-search')}>New Appointment</button>
         <div class="appointment-details">
           <h2>{appointment.name}</h2>
           <p>DoB: {appointment.dob}</p>

@@ -19,6 +19,8 @@ export async function sendMessage(senderId, receiverId, content, senderType) {
     throw new Error('Invalid sender type');
   }
 
+  console.log('Inserting message data:', messageData);
+
   const { data, error } = await supabase
     .from('messages')
     .insert([messageData]);

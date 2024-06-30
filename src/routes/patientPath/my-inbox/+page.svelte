@@ -1,33 +1,77 @@
-<script lang="ts">
+<script>
   import { onMount } from 'svelte';
   import { supabase } from '../../../supabaseClient';
-  import { goto } from '$app/navigation';
+  import { writable } from 'svelte/store';
 
-  type Message = {
-    clinician_name: string;
-    sender: string;
-    last_message: string;
-  };
+  const messages = writable([]);
+  let currentUserId = null;
 
-  let messages: Message[] = [];
-
-  onMount(async () => {
+  async function fetchClinicianName(clinician_id) {
     const { data, error } = await supabase
-      .from('messages')
-      .select('clinician_name, sender, last_message');
+      .from('clinicians')
+      .select('first_name, last_name')
+      .eq('clinician_id', clinician_id)
+      .single();
 
     if (error) {
-      console.error('Error fetching messages:', error);
-    } else {
-      messages = data as Message[];
+      console.error('Error fetching clinician details:', error);
+      return 'Unknown Clinician';
     }
-  });
 
-  function openConversation(clinicianName: string) {
-    // Navigate to the conversation page
-    // You might want to pass the clinician's name or id as a parameter
-    goto(`/conversation/${clinicianName}`);
+    return `${data.first_name} ${data.last_name}`;
   }
+
+  async function fetchMessages() {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionData.session) {
+      console.error('Error fetching user session:', sessionError);
+      return;
+    }
+
+    currentUserId = sessionData.session.user.id;
+    console.log('Current User ID:', currentUserId);
+
+    const { data: messagesData, error: messagesError } = await supabase
+      .from('messages')
+      .select('sender_clinician_id, content, timestamp')
+      .eq('receiver_patient_id', currentUserId)
+      .order('timestamp', { ascending: false });
+
+    if (messagesError) {
+      console.error('Error fetching messages:', messagesError);
+    } else {
+      console.log('Fetched messages:', messagesData);
+      const messageMap = new Map();
+
+      for (const message of messagesData) {
+        const key = message.sender_clinician_id;
+        if (!messageMap.has(key)) {
+          messageMap.set(key, message);
+        }
+      }
+
+      const fetchedMessages = [];
+      for (const [clinician_id, message] of messageMap) {
+        const clinicianName = await fetchClinicianName(clinician_id);
+        fetchedMessages.push({
+          clinician_id: clinician_id,
+          clinician_name: clinicianName,
+          last_message: message.content,
+          timestamp: message.timestamp,
+        });
+      }
+
+      messages.set(fetchedMessages);
+    }
+  }
+
+  function openConversation(clinician_id) {
+    const url = `/message-clinician?receiverId=${clinician_id}&senderId=${currentUserId}`;
+    const windowFeatures = "width=800,height=600,noopener,noreferrer";
+    window.open(url, "_blank", windowFeatures);
+  }
+
+  onMount(fetchMessages);
 </script>
 
 <style>
@@ -73,23 +117,35 @@
     color: #555;
   }
 
+  .timestamp {
+    font-size: 0.8rem;
+    color: #999;
+  }
+
   .send-message-button {
-    background-color: #ccc;
-    border: none;
+    background-color: #005EB8;
+    color: white;
     padding: 0.5rem 1rem;
+    border: none;
     cursor: pointer;
+    border-radius: 5px;
   }
 </style>
 
 <div class="container">
   <div class="header">My Messages</div>
-  {#each messages as message}
-    <div class="message-item">
-      <div class="message-info">
-        <div class="clinician-name">{message.clinician_name}</div>
-        <div class="last-message">{message.sender}: {message.last_message.substring(0, 25)}...</div>
+  {#if $messages.length === 0}
+    <p>No messages found.</p>
+  {:else}
+    {#each $messages as message}
+      <div class="message-item">
+        <div class="message-info">
+          <div class="clinician-name">{message.clinician_name}</div>
+          <div class="last-message">{message.last_message}</div>
+          <div class="timestamp">{new Date(message.timestamp).toLocaleString()}</div>
+        </div>
+        <button class="send-message-button" on:click={() => openConversation(message.clinician_id)}>SEND MESSAGE</button>
       </div>
-      <button class="send-message-button" on:click={() => openConversation(message.clinician_name)}>SEND MESSAGE</button>
-    </div>
-  {/each}
+    {/each}
+  {/if}
 </div>
