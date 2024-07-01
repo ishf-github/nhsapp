@@ -50,7 +50,7 @@
   });
 
   function viewRecord(patientId) {
-    goto(`/patient-chart?patientId=${patientId}`);
+    goto(`/clinicianPath/patient-chart?patientId=${patientId}`);
   }
 
   function sendMessage(patientId) {
@@ -65,11 +65,7 @@
   function viewTasks(id) { /* ... */ }
 
   function navigateTo(page) {
-    if (page === 'notes') {
-      goto('../notes');
-    } else if (page === 'appointment-booking-search') {
-      goto('../appointment-booking-search');
-    }
+    goto(page);
   }
 </script>
 
@@ -112,14 +108,6 @@
     text-transform: capitalize;
   }
 
-  .tasks-section {
-    margin-top: 16px;
-  }
-
-  .task-status {
-    font-style: italic;
-    color: #555;
-  }
 
   .icon-round {
     position: fixed;
@@ -154,7 +142,7 @@
 </style>
 
 <div class="appointments-page">
-  <button class="new-appointment-button" on:click={() => navigateTo('appointment-booking-search')}>New Appointment</button>
+  <button class="new-appointment-button" on:click={() => navigateTo('/clinicianPath/appointment-booking-search')}>New Appointment</button>
   
   {#each appointments as appointment (appointment.id)}
     <div class="appointment-container">
@@ -164,15 +152,6 @@
           <p>DoB: {appointment.dob}</p>
           <p>NHS Number: {appointment.nhsNumber}</p>
           <p>Next Appt: {appointment.nextAppt} {appointment.time}</p>
-        </div>
-        <div class="tasks-section">
-          <p class="task-status">
-            {#if appointment.status === 'Outstanding'}
-              Outstanding Tasks: <button class="cta-button" on:click={() => viewTasks(appointment.id)}>View</button>
-            {:else}
-              No outstanding tasks
-            {/if}
-          </p>
         </div>
       </div>
       <div class="appointment-actions">

@@ -3,21 +3,42 @@
   import { supabase } from '../../../supabaseClient';
   import { writable } from 'svelte/store';
   import { v4 as uuidv4 } from 'uuid'; // Import UUID library
+  import { goto } from '$app/navigation'; // Import goto for navigation
 
   let selectedDate;
   let selectedTime;
   const showModal = writable(false);
   let clinicians = [];
   let selectedClinician = '';
-
-  const gpSurgeryName = 'GP Surgery Name';
-  const gpAddress = 'Line 1, Line 2, City, County, Postcode';
+  let reasonForAppointment = '';
+  let minDate;
+  let timeSlots = [];
+  let currentUser = null;
+  let patientName = '';
 
   onMount(async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+      }
+
+      const { data: patientData, error: patientError } = await supabase
+        .from('patients')
+        .select('first_name, last_name')
+        .eq('patient_id', currentUser.id)
+        .single();
+
+      if (patientError) {
+        console.error('Error fetching patient data:', patientError.message, patientError.hint, patientError.details);
+      } else {
+        patientName = `${patientData.first_name} ${patientData.last_name}`;
+      }
+
       const { data, error } = await supabase
         .from('clinicians')
-        .select('clinician_id, first_name, last_name');
+        .select('clinician_id, first_name, last_name')
+        .eq('department', 'General Practitioner Services');
 
       if (error) {
         console.error('Error fetching clinicians:', error.message, error.hint, error.details);
@@ -30,10 +51,44 @@
     } catch (err) {
       console.error('Error fetching data:', err.message);
     }
+
+    minDate = getMinDate();
   });
 
+  function getMinDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function generateTimeSlots() {
+    const slots = [];
+    const now = new Date();
+    const start = new Date(selectedDate);
+    start.setHours(8, 0, 0, 0);
+
+    const end = new Date(selectedDate);
+    end.setHours(18, 0, 0, 0);
+
+    while (start <= end) {
+      if (selectedDate === getMinDate() && start <= now) {
+        start.setMinutes(start.getMinutes() + 15);
+        continue;
+      }
+      slots.push(start.toTimeString().substring(0, 5));
+      start.setMinutes(start.getMinutes() + 15);
+    }
+
+    return slots;
+  }
+
+  $: if (selectedDate) {
+    timeSlots = generateTimeSlots();
+  }
+
   async function saveAppointment() {
-    // Find the selected clinician
     const clinician = clinicians.find(clin => `${clin.first_name} ${clin.last_name}` === selectedClinician);
 
     if (!clinician) {
@@ -45,13 +100,13 @@
       appointment_id: uuidv4(),
       clinician_name: `${clinician.first_name} ${clinician.last_name}`,
       clinician_id: clinician.clinician_id,
-      patient_name: null, // Replace with actual patient name if available
-      patient_id: null, // Replace with actual patient ID if available
+      patient_id: currentUser.id,
+      patient_name: patientName,
       appointment_date: selectedDate,
       appointment_time: selectedTime,
-      appointment_type: 'video', // Set appointment type to 'video'
-      notes: null,
-      status: null
+      appointment_type: 'video_call',
+      notes: reasonForAppointment,
+      status: 'BOOKED'
     };
 
     try {
@@ -63,14 +118,12 @@
         console.error('Error saving appointment:', error.message, error.hint, error.details);
       } else {
         console.log('Appointment saved:', newAppointment);
+        alert('Appointment Booked');
+        goto('/patientPath/my-appointments');
       }
     } catch (err) {
       console.error('Error inserting data:', err.message);
     }
-  }
-
-  function toggleModal() {
-    showModal.update(n => !n);
   }
 </script>
 
@@ -84,21 +137,16 @@
     padding: 1rem;
   }
 
-  .gp-info {
+  .dropdown-container,
+  .date-input,
+  .time-input,
+  .reason-input {
     margin-bottom: 1rem;
   }
 
-  .gp-info p {
-    margin: 0.25rem 0;
-  }
-
-  .dropdown-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
-  }
-
-  .dropdown {
+  .dropdown,
+  .input-field,
+  .textarea-field {
     width: 100%;
     padding: 0.5rem;
     font-size: 1rem;
@@ -106,91 +154,31 @@
     border-radius: 4px;
   }
 
-  .modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    width: 80%; 
-    max-width: 600px; 
-    height: auto; 
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-  }
-
-  .modal-bg {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
-
-  .show {
-    display: block;
-  }
-
-  .input-field {
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-
   .button {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    color: black;
-    padding: 1rem 2rem;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
+    font-family: 'Frutiger', sans-serif;
+    font-weight: normal;
+    background-color: #005EB8;
+    color: white;
+    border: none;
     cursor: pointer;
+    padding: 1rem;
     border-radius: 4px;
-    width: 100%;
+    text-align: center;
+    text-transform: capitalize;
+    margin-top: 8px;
   }
 
-  .button-secondary {
-    background-color: #f0f0f0;
-    color: black;
-  }
-
-  .date-input, .time-input {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  label {
+  .label {
     margin-bottom: 0.5rem;
-  }
-
-  input[type="date"],
-  input[type="time"] {
-    max-width: 100%;
-    box-sizing: border-box;
+    font-weight: bold;
   }
 </style>
 
 <div class="container">
-  <div class="gp-info">
-    <p>{gpSurgeryName}</p>
-    <p>{gpAddress}</p>
-  </div>
-
   <div class="dropdown-container">
-    <select class="dropdown" bind:value={selectedClinician}>
-      <option value="" disabled selected>Search for a Clinician</option>
+    <label class="label" for="clinician">Search for a Clinician:</label>
+    <select class="dropdown" id="clinician" bind:value={selectedClinician}>
+      <option value="" disabled selected>Select a Clinician</option>
       {#each clinicians as clinician}
         <option value="{clinician.first_name} {clinician.last_name}">
           {clinician.first_name} {clinician.last_name}
@@ -200,14 +188,24 @@
   </div>
 
   <div class="date-input">
-    <label for="date">Select Date:</label>
-    <input class="input-field" type="date" id="date" bind:value={selectedDate}>
+    <label class="label" for="date">Select Date:</label>
+    <input class="input-field" type="date" id="date" bind:value={selectedDate} min={minDate}>
   </div>
 
   <div class="time-input">
-    <label for="time">Select Time:</label>
-    <input class="input-field" type="time" id="time" bind:value={selectedTime}>
+    <label class="label" for="time">Select Time:</label>
+    <select class="input-field" bind:value={selectedTime}>
+      <option value="">Select a time</option>
+      {#each timeSlots as slot}
+        <option value={slot}>{slot}</option>
+      {/each}
+    </select>
   </div>
 
-  <button class="button" on:click={saveAppointment}>Book appointment</button>
+  <div class="reason-input">
+    <label class="label" for="reason">Reason for appointment:</label>
+    <textarea class="textarea-field" id="reason" bind:value={reasonForAppointment}></textarea>
+  </div>
+
+  <button class="button" on:click={saveAppointment}>Book Video Call Appointment</button>
 </div>

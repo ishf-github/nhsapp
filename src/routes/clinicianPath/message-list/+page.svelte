@@ -165,7 +165,7 @@
 </style>
 
 <div class="app-container">
-  <button class="new-message-button" on:click={() => navigateTo('new-message')}>New Message</button>
+  <!-- <button class="new-message-button" on:click={() => navigateTo('new-message')}>New Message</button> -->
 
   {#if inboxEmpty}
     <div class="inbox-empty">Inbox is empty</div>

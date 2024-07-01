@@ -78,34 +78,37 @@
   .container {
     display: flex;
     flex-direction: column;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 1rem;
+    font-family: 'Frutiger', sans-serif;
   }
 
   .header {
-    font-family: 'Frutiger', sans-serif;
     font-weight: bold;
     background-color: #005EB8;
     color: white;
-    margin-bottom: 1rem;
     padding: 1rem;
     text-align: center;
+    border-radius: 4px;
   }
 
   .message-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f0f0f0;
+    background-color: white;
     padding: 1rem;
     margin-bottom: 1rem;
     border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .message-info {
     display: flex;
     flex-direction: column;
+    margin-right: 1rem;
   }
 
   .clinician-name {
@@ -115,6 +118,7 @@
 
   .last-message {
     color: #555;
+    margin-bottom: 0.5rem;
   }
 
   .timestamp {
@@ -125,17 +129,29 @@
   .send-message-button {
     background-color: #005EB8;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 4px;
+    font-family: 'Frutiger', sans-serif;
+    text-transform: capitalize;
+    font-size: 1rem;
+  }
+
+  .send-message-button:hover {
+    background-color: #004080;
+  }
+
+  .no-messages {
+    text-align: center;
+    color: #999;
   }
 </style>
 
 <div class="container">
   <div class="header">My Messages</div>
   {#if $messages.length === 0}
-    <p>No messages found.</p>
+    <p class="no-messages">No messages found.</p>
   {:else}
     {#each $messages as message}
       <div class="message-item">
@@ -144,7 +160,7 @@
           <div class="last-message">{message.last_message}</div>
           <div class="timestamp">{new Date(message.timestamp).toLocaleString()}</div>
         </div>
-        <button class="send-message-button" on:click={() => openConversation(message.clinician_id)}>SEND MESSAGE</button>
+        <button class="send-message-button" on:click={() => openConversation(message.clinician_id)}>Send Message</button>
       </div>
     {/each}
   {/if}

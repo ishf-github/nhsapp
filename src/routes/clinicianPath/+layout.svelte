@@ -15,7 +15,7 @@
       case 'Messages': goto('/clinicianPath/message-list'); break;
       case 'Referrals': goto('/clinicianPath/referrals'); break;
       case 'Prescriptions': goto('/clinicianPath/prescriptions'); break;
-      case 'SignOut': goto('/clinicianPath/clinician-signin'); break;
+      case 'SignOut': goto('/clinician-signin'); break;
     }
     showDropdown = false;
   }
@@ -283,7 +283,7 @@
     <li class="dropdown-item" on:click={() => navigateTo('/clinicianPath/referrals')}>Referrals</li>
     <li class="dropdown-item" on:click={() => navigateTo('/clinicianPath/prescriptions')}>Prescriptions</li>
     <li class="dropdown-item" on:click={() => navigateTo('/clinicianPath/message-list')}>Messages</li>
-    <li class="dropdown-item" on:click={() => navigateTo('/clinicianPath/clinician-signin')}>Sign Out</li>
+    <li class="dropdown-item" on:click={() => navigateTo('/clinician-signin')}>Sign Out</li>
   </ul>
 </header>
 

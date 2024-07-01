@@ -32,7 +32,7 @@
 
   function handleAction(button, patient) {
     if (button === 'View Record') {
-      goto(`/patient-chart?patientId=${patient.patient_id}`);
+      goto(`/clinicianPath/patient-chart?patientId=${patient.patient_id}`);
     }
 
     if (button === 'Send Message') {
@@ -45,15 +45,15 @@
     }
 
     if (button === 'Book Appt') {
-      goto(`/appointment-booking-search?patientId=${patient.patient_id}&patientName=${encodeURIComponent(patient.first_name + ' ' + patient.last_name)}`);
+      goto(`/clinicianPath/appointment-booking-search?patientId=${patient.patient_id}&patientName=${encodeURIComponent(patient.first_name + ' ' + patient.last_name)}`);
     }
 
     if (button === 'Refer') {
-      goto(`/write-referral?patientId=${patient.patient_id}`);
+      goto(`/clinicianPath/write-referral?patientId=${patient.patient_id}`);
     }
 
     if (button === 'Write Prescription') {
-      goto(`/write-prescription?patientId=${patient.patient_id}`);
+      goto(`/clinicianPath/write-prescription?patientId=${patient.patient_id}`);
     }
   }
 </script>

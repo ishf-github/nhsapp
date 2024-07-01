@@ -114,7 +114,7 @@
           } else {
             console.log('Referral saved:', data);
             alert('Referral saved successfully');
-            goto('/referrals');
+            goto('/clinicianPath/referrals');
           }
         }
       } catch (error) {

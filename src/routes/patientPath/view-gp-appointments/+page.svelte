@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { supabase } from '../../../supabaseClient';
+  import { goto } from '$app/navigation';
 
   let appointments = [];
   let currentUser = null;
@@ -65,11 +66,16 @@
   onMount(() => {
     fetchAppointments();
   });
+
+  function navigateTo(page) {
+    goto(`/${page}`);
+  }
 </script>
 
 <style>
   .app-container {
     padding: 20px;
+    font-family: 'Arial', sans-serif;
   }
   
   .appointment-container {
@@ -78,20 +84,25 @@
     padding: 10px;
     border-bottom: 1px solid #ccc; 
   }
-  
-  .view-appointment-button {
-    padding: 6px 12px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    margin-top: 8px;
+
+  .appointment-date {
+    font-family: 'Frutiger', sans-serif;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
   }
-  
-  .appointment-list {
-    overflow-y: auto;
-    max-height: 300px; 
+
+  .appointments-empty {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 18px;
+    color: #888;
   }
-  
+
+  .appointment-info {
+    margin-bottom: 8px;
+  }
+
   .icon-round {
     position: fixed;
     bottom: 64px; 
@@ -108,13 +119,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
-
-  .appointments-empty {
-    text-align: center;
-    margin-top: 50px;
-    font-size: 18px;
-    color: #888;
-  }
 </style>
 
 <div class="app-container">
@@ -124,15 +128,13 @@
     <div class="appointment-list">
       {#each appointments as appt (appt.id)}
         <div class="appointment-container">
-          <div><strong>{appt.patientName}</strong></div>
-          <div>Date: {new Date(appt.date).toLocaleDateString()}</div>
-          <div>Time: {appt.time}</div>
-          <div>Clinician: {appt.clinicianName}</div>
-          <button class="view-appointment-button" on:click={() => viewAppointment(appt)}>VIEW APPOINTMENT</button>
+          <div class="appointment-date">{new Date(appt.date).toLocaleDateString()}</div>
+          <div class="appointment-info">Time: {appt.time}</div>
+          <div class="appointment-info">Clinician: {appt.clinicianName}</div>
         </div>
       {/each}
     </div>
   {/if}
 
-  <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
+  <button class="icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
 </div>

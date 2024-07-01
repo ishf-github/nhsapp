@@ -86,7 +86,7 @@
   });
 
   function navigateToWriteReferral() {
-    goto('/write-referral');
+    goto('/clinicianPath/write-referral');
   }
 </script>
 
