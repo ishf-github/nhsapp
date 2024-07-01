@@ -26,7 +26,7 @@
     console.log("data:",data)
     console.log("error:",error)
 
-    if (data.user&&data.session){goto('/')} 
+    if (data.user&&data.session){goto('/clinicianPath/clinician-home')} 
     
     else
     console.log(error)

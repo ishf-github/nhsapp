@@ -7,21 +7,30 @@
   let password = '';
 
   const handleLogin = async () => {
+    console.log("Starting login process");
+    console.log("Email:", email);
+    console.log("Password:", password);
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
-    console.log("data:", data);
-    console.log("error:", error);
+    console.log("Sign-in response data:", data);
+    console.log("Sign-in response error:", error);
 
     if (data.user && data.session) {
       const { user } = data;
+      console.log("User signed in:", user);
+
       const { data: userData, error: userError } = await supabase
         .from('patients')
         .select('*')
         .eq('patient_id', user.id)
         .single();
+
+      console.log("Fetched userData:", userData);
+      console.log("Fetched userError:", userError);
 
       if (userError && userError.code !== 'PGRST116') {
         console.error("Error fetching user data:", userError);
@@ -31,6 +40,8 @@
           addressLine2, city, postcode, phoneNumber, emergencyContactName,
           emergencyContactNumber
         } = user.user_metadata;
+
+        console.log("User metadata:", user.user_metadata);
 
         const { data: insertData, error: insertError } = await supabase
           .from('patients')
@@ -48,24 +59,31 @@
             patient_id: user.id 
           }]);
 
+        console.log("Insert data:", insertData);
+        console.log("Insert error:", insertError);
+
         if (insertError) {
           console.error('Error inserting patient details:', insertError);
+          return null;
         } else {
-          console.log('Patient details inserted:', insertData);
+          console.log('Patient details inserted successfully');
         }
       }
 
+      console.log("Redirecting to /patientPath/patient-home");
       goto('/patientPath/patient-home');
     } else {
-      console.log(error);
+      console.log("Sign-in error:", error);
     }
   };
 
   const navigateToProviderSignIn = () => {
+    console.log("Navigating to clinician sign-in");
     goto('../clinician-signin');
   };
 
   const navigateToPatientRegistration = () => {
+    console.log("Navigating to patient registration");
     goto('../patient-registration');
   };
 </script>

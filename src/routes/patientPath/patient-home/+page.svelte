@@ -2,8 +2,7 @@
   import Button from "../../../components/Button.svelte"; 
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
-  import { supabase } from '../../../supabaseClient'; // Adjust the path as needed
-  
+  import { supabase } from '../../../supabaseClient';
   let user = null;
   let userData = null;
   
@@ -97,34 +96,9 @@
     }
   }
 
-  .icon-button {
-    width: 8vh;
-    height: 8vh;
-  }
-
-  .icon-round {
-    position: fixed;
-    bottom: 64px; 
-    right: 20px; 
-    z-index: 30; 
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    background-color: #fff; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-  }
-
   :root {
     --header-height: 10vh;
     --nav-bar-height: 10vh;
-    --icon-round-size: 10vh; 
-    --icon-round-margin: 5vw; 
-    --icon-round-total: calc(var(--icon-round-size) + var(--icon-round-margin)); 
   }
 </style>
 

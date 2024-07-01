@@ -344,7 +344,7 @@
       <li class="dropdown-item" on:click={() => navigateTo('/patient-signin')}>Sign Out</li>
     </ul>
     <div class="logo" role="button" tabindex="0" on:click={navigateHome} on:keydown={(event) => handleKeydown(event, 'Home')}>
-      <img src="src/myNHS Logo.png" alt="Logo">
+      <img src="..\src\myNHS Logo.png" alt="Logo">
     </div>
     <input class="search-bar" type="text" placeholder={searchPlaceholder} />
     <button class="icon-button" on:click={() => handleButtonClick('Profile')} on:keydown={(event) => handleKeydown(event, 'Profile')}>👤</button>
