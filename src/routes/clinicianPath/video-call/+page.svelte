@@ -86,14 +86,14 @@ const stopVideoCall=async()=>{
 .video-player-container {
   width: 500px;
   height: 500px;
-  background-color: grey;
+  background-color: black;
 }
 
 .video-player {
   width: 100%;
   height: auto;
   aspect-ratio: 16/9;
-  background-color: grey;
+  background-color: black;
 }
 
 .videos {
