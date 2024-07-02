@@ -15,6 +15,8 @@
       goto('/patientPath/my-prescriptions');
     } else if (page === 'myMessages') {
       goto('/patientPath/my-inbox');
+    } else if (page === 'myReferrals') {
+      goto('/patientPath/my-referrals');
     }
   }
 
@@ -114,6 +116,9 @@
         </div>
         <div class="button-spacing">
           <Button text="Messages" action={() => navigateTo('myMessages')} />
+        </div>
+        <div class="button-spacing">
+          <Button text="Referrals" action={() => navigateTo('myReferrals')} />
         </div>
       </div>
     {:else}

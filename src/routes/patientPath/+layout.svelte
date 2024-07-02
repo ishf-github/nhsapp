@@ -104,12 +104,12 @@
 
   .dropdown-menu {
     position: absolute;
-    top: var(--header-height); /* Align with the bottom of the header */
+    top: var(--header-height);
     left: 0;
     right: 0;
     background-color: #005EB8;
     color: white;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25); /* Downward-offset shadow */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
     z-index: 200;
     display: none;
     font-family: 'Frutiger', sans-serif;
@@ -193,7 +193,7 @@
     background-color: #fff;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 10;
-    padding-top: 0; /* Remove padding-top to align with the header */
+    padding-top: 0;
   }
 
   @media (min-width: 769px) {
@@ -204,14 +204,14 @@
     .side-nav {
       display: block;
       position: fixed;
-      top: var(--header-height); /* Ensure the top position aligns with the header */
+      top: var(--header-height);
       bottom: 0;
       left: 0;
       width: var(--nav-bar-width);
       background-color: fff;
       box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
       z-index: 10;
-      padding-top: 0; /* Remove padding-top to align with the header */
+      padding-top: 0;
     }
 
     .side-nav button {

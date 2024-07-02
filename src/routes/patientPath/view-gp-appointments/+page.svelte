@@ -46,7 +46,7 @@
         appointments = appointmentsData.map(appt => ({
           id: appt.appointment_id,
           date: appt.appointment_date,
-          time: appt.appointment_time,
+          time: appt.appointment_time.slice(0, 5),
           clinicianName: appt.clinician_name,
           patientName: `${appt.patients.first_name} ${appt.patients.last_name}`
         }));
@@ -73,23 +73,38 @@
 </script>
 
 <style>
-  .app-container {
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
+  .container {
+    font-family: 'Frutiger', sans-serif;
+    max-width: 600px;
+    margin: auto;
+    padding: 16px;
   }
-  
-  .appointment-container {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    border-bottom: 1px solid #ccc; 
+
+  .header {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+
+  .appointment-card {
+    background-color: #fff;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  .appointment-info {
+    margin-bottom: 8px;
+    font-family: 'Arial', sans-serif;
   }
 
   .appointment-date {
     font-family: 'Frutiger', sans-serif;
     font-weight: bold;
-    font-size: 1.2rem;
-    margin-bottom: 5px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
   }
 
   .appointments-empty {
@@ -97,10 +112,6 @@
     margin-top: 50px;
     font-size: 18px;
     color: #888;
-  }
-
-  .appointment-info {
-    margin-bottom: 8px;
   }
 
   .icon-round {
@@ -119,22 +130,23 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
+
+  .bold-text {
+    font-weight: bold;
+  }
 </style>
 
-<div class="app-container">
+<div class="container">
+  <div class="header">My Appointments</div>
   {#if noAppointments}
     <div class="appointments-empty">No appointments found</div>
   {:else}
-    <div class="appointment-list">
-      {#each appointments as appt (appt.id)}
-        <div class="appointment-container">
-          <div class="appointment-date">{new Date(appt.date).toLocaleDateString()}</div>
-          <div class="appointment-info">Time: {appt.time}</div>
-          <div class="appointment-info">Clinician: {appt.clinicianName}</div>
-        </div>
-      {/each}
-    </div>
+    {#each appointments as appt (appt.id)}
+      <div class="appointment-card" on:click={() => viewAppointment(appt)}>
+        <div class="appointment-date">{new Date(appt.date).toLocaleDateString()}</div>
+        <div class="appointment-info"><span class="bold-text">Time:</span> {appt.time}</div>
+        <div class="appointment-info"><span class="bold-text">Clinician:</span> {appt.clinicianName}</div>
+      </div>
+    {/each}
   {/if}
-
-  <button class="icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
 </div>
