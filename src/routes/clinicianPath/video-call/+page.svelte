@@ -4,7 +4,7 @@ import { onMount } from 'svelte';
 let client;
 let stream;
 let userVideo;
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfa2V5IjoiYWgxU0pqVDlSNk8yRUl5bGZJODQ2USIsInJvbGVfdHlwZSI6MSwidHBjIjoibXluaHMiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3MTk5NTQ4NzQsImV4cCI6MTcxOTk1ODQ3NH0.E69eTpHUZrEqE8MvzM7vZukzSMGQtM9FHdlhuyDs5wA';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfa2V5IjoiYWgxU0pqVDlSNk8yRUl5bGZJODQ2USIsInJvbGVfdHlwZSI6MSwidHBjIjoibXluaHMiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE3MTk5NTg2NTcsImV4cCI6MTcxOTk2MjI1N30.WfegRo3j_0IhLjlJjlwMgDNUJH9eooCjNi5JL39UCp0';
 
 
 onMount(async ()=>{ 
@@ -19,34 +19,65 @@ onMount(async ()=>{
 
 const startVideoCall=async()=>{
   await client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
-    client.join('mynhs', token, 'userName', '1234') //replace 'VIDEO_SDK_JWT with generated auth code (valid for 1hr)'
+    client.join('mynhs', token, 'userName', '1234')
     .then(() => {
      stream = client.getMediaStream()
+     client.getAllUser().forEach((user) => {
+      if (user.bVideoOn) {
+        stream.renderVideo(
+          document.querySelector('#participant-video'),
+          user.userId, 500, 500, 0, 0, 3)
+      }
+    })
      console.log("stream: ",stream)
      client.on('peer-video-state-change', (payload) => {
-      console.log("payload: ",payload)
-        console.log("user joined.",payload.userId)
-        const { userId } = payload;
-        console.log("stream2: ",stream)
+      const { userId } = payload;
+      if (payload.action==='Start'){
         const participantVideo = document.querySelector("#participant-video")
         console.log("participantVideo: ",participantVideo)
-          stream.renderVideo(participantVideo,userId,500,500,0,0,3);
+        stream.renderVideo(participantVideo,userId,500,500,0,0,3);
+      }
+      else if (payload.action==='Stop'){
+        stream.stopRenderVideo(
+        document.querySelector('#participant-video'),
+        payload.userId
+    )
+    stream.detachVideo(payload.userId)
+      }
+        
       });
-    }).then(()=>{stream.startVideo({ videoElement: document.querySelector('#my-self-view-video') }) 
-      
+    }).then(()=>{stream.startVideo({ videoElement: document.querySelector('#my-self-view-video') })     
     })
-
   })
 }
 
-
-
 const stopVideoCall=async()=>{
-  await stream.stopVideo().then(() => {
-  stream.detachVideo(client.getCurrentUserInfo().userId)
-  client.leave(true)
-})
+  
+    client.getAllUser().forEach((user) => {
+      stream.stopRenderVideo(
+        document.querySelector('#participant-video'),
+        user.userId
+    )
+      stream.detachVideo(user.userId)
+    })
+  
+  client.leave()
+
 }
+
+// const stopVideoCall=async()=>{
+//   await stream.stopVideo().then(() => {
+//     client.getAllUser().forEach((user) => {
+//       stream.stopRenderVideo(
+//         document.querySelector('#participant-video'),
+//         payload.userId
+//     )
+//       stream.detachVideo(user.userId)
+//     })
+  
+//   client.leave()
+// })
+// }
 
 </script>
 
@@ -62,6 +93,7 @@ const stopVideoCall=async()=>{
   width: 100%;
   height: auto;
   aspect-ratio: 16/9;
+  background-color: grey;
 }
 
 .videos {
