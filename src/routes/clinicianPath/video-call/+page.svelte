@@ -11,14 +11,16 @@ onMount(async ()=>{
     const ZoomVideo = (await import('@zoom/videosdk')).default;
     client = ZoomVideo.createClient()
     if (client){
- 
+  // Handle new participant video streams
+  
 }
 })
 
 
 const startVideoCall=async()=>{
   await client.init('en-US', 'Global', { patchJsMedia: true }).then(() => {
-    client.join('mynhs', token, 'userName', '1234') 
+    client.join('mynhs', token, 'userName', '1234') //replace 'VIDEO_SDK_JWT with generated auth code (valid for 1hr)'
+    .then(() => {
      stream = client.getMediaStream()
      console.log("stream: ",stream)
      client.on('peer-video-state-change', (payload) => {
@@ -33,6 +35,7 @@ const startVideoCall=async()=>{
     }).then(()=>{stream.startVideo({ videoElement: document.querySelector('#my-self-view-video') }) 
       
     })
+
   })
 }
 
