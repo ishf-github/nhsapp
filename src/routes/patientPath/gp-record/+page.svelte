@@ -160,7 +160,7 @@
   <div class="section">
     <div class="subheader">Medical Information:</div>
     <div class="buttons">
-      <button class="button" on:click={() => navigateTo('view-appointments')}>
+      <button class="button" on:click={() => navigateTo('my-appointments')}>
         <span>Upcoming and past appointments</span>
         <span>{counts.appointments} <span class="arrow">→</span></span>
       </button>

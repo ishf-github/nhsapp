@@ -167,7 +167,7 @@
   }
 
   .logo img {
-    max-height: 90%;
+    max-height: 100%;
     width: auto;
   }
 

@@ -57,7 +57,7 @@
     <span>Book an appointment</span>
     <span class="arrow">➔</span>
   </button>
-  <button class="cta-button" on:click={() => navigateTo('patientPath/view-appointments')}>
+  <button class="cta-button" on:click={() => navigateTo('patientPath/view-gp-appointments')}>
     <span>View past and upcoming appointments</span>
     <span class="arrow">➔</span>
   </button>

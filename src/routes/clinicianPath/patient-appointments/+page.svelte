@@ -20,6 +20,7 @@
           appointment_date,
           appointment_time,
           status,
+          patient_id,
           patients (
             patient_id,
             first_name,
@@ -35,10 +36,10 @@
       } else {
         appointments = data.map(appt => ({
           id: appt.appointment_id,
-          patientId: appt.patients.patient_id,
-          name: `${appt.patients.first_name} ${appt.patients.last_name}`,
-          dob: appt.patients.date_of_birth,
-          nhsNumber: appt.patients.nhs_number,
+          patientId: appt.patient_id,
+          name: `${appt.patients?.first_name || 'Unknown'} ${appt.patients?.last_name || 'Unknown'}`,
+          dob: appt.patients?.date_of_birth || 'Unknown',
+          nhsNumber: appt.patients?.nhs_number || 'Unknown',
           nextAppt: appt.appointment_date,
           time: appt.appointment_time,
           status: appt.status
@@ -107,7 +108,6 @@
     border-radius: 4px;
     text-transform: capitalize;
   }
-
 
   .icon-round {
     position: fixed;

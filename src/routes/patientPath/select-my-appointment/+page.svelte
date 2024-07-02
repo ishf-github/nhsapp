@@ -17,7 +17,7 @@
     }
   
     .header {
-      font-family: 'Frutiger W01', sans-serif;
+      font-family: 'Frutiger', sans-serif;
       font-weight: bold;
       margin-bottom: 1rem;
       background-color: #005EB8;

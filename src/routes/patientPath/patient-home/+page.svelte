@@ -6,10 +6,6 @@
   let user = null;
   let userData = null;
   
-  const handleClick = () => {
-    alert("Button clicked");
-  };
-
   function navigateTo(page) {
     if (page === 'gpRecord') {
       goto('/patientPath/gp-record');
@@ -49,9 +45,9 @@
 
 <style>
   .app-container {
+    font-family: 'Frutiger', sans-serif;
     display: flex;
     flex-direction: column;
-    justify-content: center; 
     align-items: center;
     width: 100%;
     height: calc(100vh - var(--header-height) - var(--search-bar-height) - var(--nav-bar-height));
@@ -62,37 +58,37 @@
     padding-bottom: 100px;
   }
 
+  .welcome-message {
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .middle-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .button-spacing {
+    margin: 1rem 0;
+  }
+
   @media (max-width: 768px) { 
     .app-container {
       width: 100%;
-      margin: 0; 
       padding: 4%;
-    }
-
-    .middle-buttons {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around; 
-      width: 100%;
-      height: 100%; 
-      padding: 4% 0; 
     }
   }
 
   @media (min-width: 769px) {
     .app-container {
       width: 100%;
-      margin: 0; 
       padding: 4%;
-    }
-
-    .middle-buttons {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around; 
-      width: 100%;
-      height: 100%; 
-      padding: 4% 0; 
     }
   }
 
@@ -104,13 +100,21 @@
 
 <div class="app-container">
   {#if user}
-    <p>Welcome, {user.email}!</p>
+    <p class="welcome-message">{userData ? `${userData.first_name} ${userData.last_name}` : 'Loading...'}</p>
     {#if userData}
       <div class="middle-buttons">
-        <Button text="MY GP RECORD" action={() => navigateTo('gpRecord')} />
-        <Button text="APPOINTMENTS" action={() => navigateTo('myAppointments')} />
-        <Button text="PRESCRIPTIONS" action={() => navigateTo('myPrescriptions')} />
-        <Button text="MESSAGES" action={() => navigateTo('myMessages')} />
+        <div class="button-spacing">
+          <Button text="My GP Record" action={() => navigateTo('gpRecord')} />
+        </div>
+        <div class="button-spacing">
+          <Button text="Appointments" action={() => navigateTo('myAppointments')} />
+        </div>
+        <div class="button-spacing">
+          <Button text="Prescriptions" action={() => navigateTo('myPrescriptions')} />
+        </div>
+        <div class="button-spacing">
+          <Button text="Messages" action={() => navigateTo('myMessages')} />
+        </div>
       </div>
     {:else}
       <p>Loading your data...</p>

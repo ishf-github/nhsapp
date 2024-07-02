@@ -33,39 +33,47 @@
       } else if (data.length === 0) {
         inboxEmpty = true;
       } else {
-        const messageMap = new Map();
+        const patientIds = new Set();
+        const uniqueMessages = new Map();
+
         for (const message of data) {
           const senderId = message.sender_clinician_id || message.sender_patient_id;
           const receiverId = message.receiver_clinician_id || message.receiver_patient_id;
-          const key = senderId < receiverId ? `${senderId}-${receiverId}` : `${receiverId}-${senderId}`;
-          if (!messageMap.has(key)) {
-            messageMap.set(key, message);
+          const otherUserId = senderId === currentUser.id ? receiverId : senderId;
+
+          if (!uniqueMessages.has(otherUserId)) {
+            uniqueMessages.set(otherUserId, message);
+            if (message.sender_patient_id && message.sender_patient_id !== currentUser.id) {
+              patientIds.add(message.sender_patient_id);
+            }
+            if (message.receiver_patient_id && message.receiver_patient_id !== currentUser.id) {
+              patientIds.add(message.receiver_patient_id);
+            }
           }
         }
 
-        messages = await Promise.all(Array.from(messageMap.values()).map(async message => {
-          const otherUserId = message.sender_clinician_id === currentUser.id || message.sender_patient_id === currentUser.id
-            ? (message.receiver_clinician_id || message.receiver_patient_id)
-            : (message.sender_clinician_id || message.sender_patient_id);
+        const { data: patientsData, error: patientsError } = await supabase
+          .from('patients')
+          .select('patient_id, first_name, last_name')
+          .in('patient_id', Array.from(patientIds));
 
-          const { data: patientData, error: patientError } = await supabase
-            .from('patients')
-            .select('first_name, last_name')
-            .eq('patient_id', otherUserId)
-            .single();
-
-          if (patientError) {
-            console.error('Error fetching patient info:', patientError.message, patientError.details);
-            return { ...message, patientName: 'Unknown' };
+        if (patientsError) {
+          console.error('Error fetching patients:', patientsError.message, patientsError.details);
+        } else {
+          const patientMap = new Map();
+          for (const patient of patientsData) {
+            patientMap.set(patient.patient_id, `${patient.first_name} ${patient.last_name}`);
           }
 
-          return {
+          messages = Array.from(uniqueMessages.values()).map(message => ({
             ...message,
-            patientName: `${patientData.first_name} ${patientData.last_name}`
-          };
-        }));
+            patientName: message.sender_patient_id
+              ? patientMap.get(message.sender_patient_id) || 'Unknown'
+              : patientMap.get(message.receiver_patient_id) || 'Unknown'
+          }));
 
-        inboxEmpty = false;
+          inboxEmpty = false;
+        }
       }
     } catch (err) {
       console.error('Unexpected error fetching messages:', err);
@@ -100,6 +108,9 @@
 <style>
   .app-container {
     padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   .message-container {
@@ -114,22 +125,23 @@
   }
 
   .send-message-button, .new-message-button {
-    padding: 12px 18px;
+    padding: 0px 12px;
     font-family: 'Frutiger', sans-serif;
     font-weight: normal;
-    font-size: 16px;
     background-color: #005EB8;
     color: white;
     border: none;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 4px;
+    text-align: center;
     text-transform: capitalize;
-    margin-top: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .message-list {
     overflow-y: auto;
-    max-height: 300px;
+    flex-grow: 1;
   }
 
   .icon-round {
@@ -165,8 +177,6 @@
 </style>
 
 <div class="app-container">
-  <!-- <button class="new-message-button" on:click={() => navigateTo('new-message')}>New Message</button> -->
-
   {#if inboxEmpty}
     <div class="inbox-empty">Inbox is empty</div>
   {:else}
@@ -175,7 +185,7 @@
         <div class="message-container">
           <div>
             <div class="patient-name"><strong>{message.patientName}</strong></div>
-            <div style="font-family: Arial, sans-serif;">{message.sender_clinician_id === currentUser.id || message.sender_patient_id === currentUser.id ? 'You' : (message.sender_clinician_id || message.sender_patient_id)}</div>
+            <div style="font-family: Arial, sans-serif;">{message.sender_clinician_id === currentUser.id || message.sender_patient_id === currentUser.id ? 'You' : message.patientName}</div>
             <div class="message-preview" style="font-family: Arial, sans-serif;">{message.content}</div>
           </div>
           <button class="send-message-button" on:click={() => openMessageWindow(message)}>Send Message</button>
