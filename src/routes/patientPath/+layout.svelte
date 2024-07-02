@@ -163,7 +163,7 @@
       left: 0;
       right: 0;
       justify-content: space-around;
-      background-color: white;
+      background-color: rgb(206, 202, 195);
       z-index: 20; 
     }
   }
@@ -177,10 +177,9 @@
     align-items: center;
     color: white;
     font-weight: bold;
-    background-color: #005EB8;
-    border-color: #0072CE;
+    background-color: #2D3A42;
+    border: none;
     font-family: 'Frutiger', sans-serif;
-    font-weight: bold;
     text-transform: capitalize;
   }
 
@@ -293,8 +292,8 @@
 </div>
   
   <nav>
-      <button class="nav-icon" on:click={() => handleButtonClick('gpRecord')}>GP RECORD</button>
-      <button class="nav-icon" on:click={() => handleButtonClick('myAppointments')}>APPTS</button>
-      <button class="nav-icon" on:click={() => handleButtonClick('myHealth')}>MY HEALTH</button>
-      <button class="nav-icon" on:click={() => handleButtonClick('myMessages')}>MESSAGES</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('gpRecord')}>GP Record</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('myAppointments')}>Appts</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('myPrescriptions')}>Prescriptions</button>
+      <button class="nav-icon" on:click={() => handleButtonClick('myMessages')}>Messages</button>
   </nav>

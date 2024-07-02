@@ -142,7 +142,7 @@
       left: 0;
       right: 0;
       justify-content: space-around;
-      background-color: white;
+      background-color: rgb(206, 202, 195);
       z-index: 20; 
     }
   }
@@ -180,10 +180,9 @@
     align-items: center;
     color: white;
     font-weight: bold;
-    background-color: #005EB8;
-    border-color: #0072CE;
+    background-color: #2D3A42;
+    border: none;
     font-family: 'Frutiger', sans-serif;
-    font-weight: bold;
     text-transform: capitalize;
   }
 
@@ -202,7 +201,6 @@
       background-color: #fff;
       box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
       z-index: 10;
-      /* padding-top: 1rem; */
     }
 
     .side-nav button {

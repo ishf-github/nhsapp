@@ -35,7 +35,13 @@
 
 <style>
   .medication-container {
-    padding: 1rem;
+    font-family: 'Frutiger', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
   }
 
   .medication-card {
@@ -48,6 +54,8 @@
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
   }
 
   .medication-info {
@@ -58,12 +66,14 @@
   .medication-name {
     font-weight: bold;
     margin-bottom: 0.5rem;
+    font-family: 'Frutiger', sans-serif;
   }
 
   .medication-details {
     font-size: 0.9rem;
     color: #666;
     line-height: 1.4;
+    font-family: Arial, sans-serif;
   }
 
   .select-button {
@@ -75,6 +85,7 @@
     border-radius: 4px;
     cursor: pointer;
     text-align: center;
+    font-family: 'Frutiger', sans-serif;
   }
 
   .modal {
@@ -87,6 +98,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1000;
   }
 
   .modal-content {
@@ -101,6 +113,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: 'Frutiger', sans-serif;
+  }
+
+  .modal-body {
+    font-family: Arial, sans-serif;
   }
 
   .close-button {

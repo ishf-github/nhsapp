@@ -128,6 +128,4 @@
       </div>
     </div>
   {/each}
-
-  <button class="icon-button icon-round" on:click={() => handleAction('notes')}>NOTES</button>
 </div>

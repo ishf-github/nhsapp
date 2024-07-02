@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import { supabase } from '../../../supabaseClient';
+  import { goto } from '$app/navigation';
 
   let selectedDate;
   let selectedTime;
@@ -12,8 +13,10 @@
   let selectedPatientName = '';
   let clinicianId = '';
   let clinicianName = '';
+  let notes = '';
   const showModal = writable(false);
   let minDate;
+  let maxDate;
   let timeSlots = [];
 
   async function searchPatients() {
@@ -66,7 +69,7 @@
       appointment_date: selectedDate,
       appointment_time: selectedTime,
       appointment_type: appointmentType,
-      notes: null,
+      notes: notes,
       status: 'BOOKED',
     };
 
@@ -93,11 +96,21 @@
     } else {
       console.log('Appointment saved:', data);
       alert('Appointment saved successfully');
+      goto('/clinicianPath/patient-appointments');
     }
   }
 
   function getMinDate() {
     const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function getMaxDate() {
+    const now = new Date();
+    now.setMonth(now.getMonth() + 3);
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
@@ -126,6 +139,7 @@
 
   onMount(async () => {
     minDate = getMinDate();
+    maxDate = getMaxDate();
 
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
@@ -157,6 +171,7 @@
     max-width: 600px;
     margin: 0 auto;
     padding: 1rem;
+    font-family: Arial, sans-serif;
   }
 
   .search-container {
@@ -173,9 +188,9 @@
   }
 
   .button {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    color: black;
+    background-color: #005EB8;
+    border: none;
+    color: white;
     padding: 1rem 2rem;
     text-align: center;
     text-decoration: none;
@@ -185,9 +200,10 @@
     cursor: pointer;
     border-radius: 4px;
     width: 100%;
+    font-family: 'Frutiger', sans-serif;
   }
 
-  .date-input, .time-input, .type-input {
+  .date-input, .time-input, .type-input, .notes-input {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -201,6 +217,14 @@
   select {
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
   }
 
   .patient-select-container {
@@ -263,7 +287,7 @@
 
   <div class="date-input">
     <label for="date">Select Date:</label>
-    <input class="input-field" type="date" id="date" bind:value={selectedDate} min={minDate}>
+    <input class="input-field" type="date" id="date" bind:value={selectedDate} min={minDate} max={maxDate}>
   </div>
 
   <div class="time-input">
@@ -284,6 +308,11 @@
       <option value="Phone Call">Phone Call</option>
       <option value="In-person Appointment">In-person Appointment</option>
     </select>
+  </div>
+
+  <div class="notes-input">
+    <label for="notes">Notes:</label>
+    <textarea id="notes" bind:value={notes} rows="4" class="input-field"></textarea>
   </div>
 
   <button class="button" on:click={saveAppointment}>Book Appointment</button>

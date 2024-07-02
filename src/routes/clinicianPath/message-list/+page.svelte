@@ -193,6 +193,4 @@
       {/each}
     </div>
   {/if}
-
-  <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>Notes</button>
 </div>

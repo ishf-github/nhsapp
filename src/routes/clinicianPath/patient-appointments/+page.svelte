@@ -160,6 +160,4 @@
       </div>
     </div>
   {/each}
-
-  <button class="icon-button icon-round" on:click={() => navigateTo('notes')}>NOTES</button>
 </div>
