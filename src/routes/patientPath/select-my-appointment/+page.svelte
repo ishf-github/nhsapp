@@ -1,6 +1,7 @@
 <script>
     import { goto } from '$app/navigation';
   
+    //Navigation
     function navigateTo(page) {
       goto(`/${page}`);
     }

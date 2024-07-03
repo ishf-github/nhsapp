@@ -6,6 +6,8 @@
   let user = null;
   let userData = null;
   
+
+  //Navigation
   function navigateTo(page) {
     if (page === 'gpRecord') {
       goto('/patientPath/gp-record');
@@ -21,6 +23,7 @@
   }
 
   onMount(async () => {
+    // Fetch the user session from supabase
     const { data: { user: fetchedUser }, error } = await supabase.auth.getUser();
     if (error) {
       console.error("Error fetching user:", error);
@@ -30,6 +33,7 @@
     user = fetchedUser;
 
     if (user) {
+      // Fetch patient data
       const { data, error } = await supabase
         .from('patients')
         .select('*')
@@ -37,14 +41,13 @@
         .single();
 
       if (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user data:', error); 
       } else {
         userData = data;
       }
     }
   });
 </script>
-
 <style>
   .app-container {
     font-family: 'Frutiger', sans-serif;

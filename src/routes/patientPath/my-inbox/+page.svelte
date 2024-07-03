@@ -7,6 +7,7 @@
   let currentUserId = null;
 
   async function fetchClinicianName(clinician_id) {
+    // Query supabase for clinician details
     const { data, error } = await supabase
       .from('clinicians')
       .select('first_name, last_name')
@@ -21,7 +22,9 @@
     return `${data.first_name} ${data.last_name}`;
   }
 
+  // Fetch patient messages
   async function fetchMessages() {
+    // Patient session
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
     if (sessionError || !sessionData.session) {
       console.error('Error fetching user session:', sessionError);
@@ -29,8 +32,8 @@
     }
 
     currentUserId = sessionData.session.user.id;
-    console.log('Current User ID:', currentUserId);
 
+    // Query supabase for messages received
     const { data: messagesData, error: messagesError } = await supabase
       .from('messages')
       .select('sender_clinician_id, content, timestamp')
@@ -40,7 +43,7 @@
     if (messagesError) {
       console.error('Error fetching messages:', messagesError);
     } else {
-      console.log('Fetched messages:', messagesData);
+      // Latest message map
       const messageMap = new Map();
 
       for (const message of messagesData) {
@@ -50,6 +53,7 @@
         }
       }
 
+      // Messages with clinician array
       const fetchedMessages = [];
       for (const [clinician_id, message] of messageMap) {
         const clinicianName = await fetchClinicianName(clinician_id);
@@ -61,16 +65,19 @@
         });
       }
 
+      // Update messages
       messages.set(fetchedMessages);
     }
   }
 
+  // Open clinician conversation
   function openConversation(clinician_id) {
     const url = `/message-clinician?receiverId=${clinician_id}&senderId=${currentUserId}`;
     const windowFeatures = "width=800,height=600,noopener,noreferrer";
     window.open(url, "_blank", windowFeatures);
   }
 
+  // Call fetchMessages on mount
   onMount(fetchMessages);
 </script>
 

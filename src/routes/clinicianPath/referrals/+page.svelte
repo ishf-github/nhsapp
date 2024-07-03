@@ -6,18 +6,18 @@
   let referrals = [];
   let errorMessage = '';
 
+  // Fetch referrals data
   async function fetchReferrals() {
     try {
-      console.log('Fetching session data...');
+      // Get the current user session
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
-      
-      console.log('Session data:', sessionData);
 
+      // Check session data and get clinician ID
       if (sessionData && sessionData.session) {
         const clinicianId = sessionData.session.user.id;
-        console.log('Clinician ID:', clinicianId);
 
+        // Fetch referral datafrom Supabase
         const { data: referralsData, error: referralsError } = await supabase
           .from('referrals')
           .select('referral_id, patient_id, referring_clinician_id, referred_to_clinician_id, referred_to_department, referral_date')
@@ -26,21 +26,16 @@
 
         if (referralsError) throw referralsError;
 
-        console.log('Referrals data:', referralsData);
-
+        // Fetch referral data
         referrals = await Promise.all(referralsData.map(async (referral) => {
-          console.log('Fetching referring clinician for referral ID:', referral.referral_id);
           const { data: referringClinician, error: referringClinicianError } = await supabase
             .from('clinicians')
             .select('first_name, last_name')
             .eq('clinician_id', referral.referring_clinician_id)
             .single();
-
+          // Error handling
           if (referringClinicianError) throw referringClinicianError;
 
-          console.log('Referring clinician:', referringClinician);
-
-          console.log('Fetching referred to clinician for referral ID:', referral.referral_id);
           const { data: referredToClinician, error: referredToClinicianError } = await supabase
             .from('clinicians')
             .select('first_name, last_name')
@@ -49,9 +44,6 @@
 
           if (referredToClinicianError) throw referredToClinicianError;
 
-          console.log('Referred to clinician:', referredToClinician);
-
-          console.log('Fetching patient for referral ID:', referral.referral_id);
           const { data: patient, error: patientError } = await supabase
             .from('patients')
             .select('first_name, last_name')
@@ -60,8 +52,7 @@
 
           if (patientError) throw patientError;
 
-          console.log('Patient:', patient);
-
+          //Combined referral data for patient and clinician
           return {
             ...referral,
             referring_clinician_name: `${referringClinician.first_name} ${referringClinician.last_name}`,
@@ -69,8 +60,6 @@
             patient_name: `${patient.first_name} ${patient.last_name}`
           };
         }));
-
-        console.log('Final referrals:', referrals);
       } else {
         console.error('No session data found');
       }
@@ -80,11 +69,12 @@
     }
   }
 
+  // Fetch referrals data on mount
   onMount(() => {
-    console.log('Component mounted');
     fetchReferrals();
   });
 
+  //Navigate to write referral
   function navigateToWriteReferral() {
     goto('/clinicianPath/write-referral');
   }
@@ -133,7 +123,6 @@
     margin-bottom: 1rem;
     text-align: center;
     width: 10rem;
-    
   }
 
   .cta-button:hover {

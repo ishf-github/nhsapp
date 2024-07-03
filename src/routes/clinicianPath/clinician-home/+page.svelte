@@ -1,11 +1,14 @@
 <script>
-  import Button from "../../../components/Button.svelte"; 
-  import { goto } from '$app/navigation';
-  import { onMount } from 'svelte';
+  import Button from "../../../components/Button.svelte";
+  import { goto } from '$app/navigation'; 
+  import { onMount } from 'svelte'; 
   import { supabase } from '../../../supabaseClient';
+
+
   let user = null;
   let userData = null;
 
+  // Navigation
   function navigateTo(page) {
     if (page === 'patients') {
       goto('/clinicianPath/patients');
@@ -22,6 +25,7 @@
     }
   }
 
+  // Fetch user information when component mounts
   onMount(async () => {
     const { data: { user: fetchedUser }, error } = await supabase.auth.getUser();
     if (error) {
@@ -101,24 +105,6 @@
     --nav-bar-height: 10vh;
   }
 
-  .icon-round {
-    position: fixed;
-    bottom: 64px; 
-    right: 20px; 
-    z-index: 30; 
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    background-color: #005EB8;
-    color: white;
-    font-family: 'Frutiger', sans-serif;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-  }
 </style>
 
 <div class="app-container">

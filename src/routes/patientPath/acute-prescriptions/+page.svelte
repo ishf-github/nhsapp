@@ -5,6 +5,7 @@
   let prescriptions = [];
   let currentUser = null;
 
+  // Fetch clinician name from ID
   async function fetchClinicianName(clinicianId) {
     const { data, error } = await supabase
       .from('clinicians')
@@ -20,21 +21,22 @@
     }
   }
 
+   // Fetch current user session
   onMount(async () => {
-    // Fetch the current user's session
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) {
       console.error('Error getting session:', sessionError.message);
       return;
     }
 
-    currentUser = session?.user;
+    // Set the current user
+    currentUser = session?.user; 
     if (!currentUser) {
       console.error('User not authenticated');
       return;
     }
 
-    // Fetch prescriptions for the current user with prescription_term 'short_term'
+    // Fetch short term prescriptions
     const { data, error } = await supabase
       .from('prescriptions')
       .select('medication_id, clinician_id, start_date, end_date, prescription_term, notes')
@@ -46,6 +48,7 @@
       return;
     }
 
+    // Fetch additional data
     prescriptions = await Promise.all(data.map(async prescription => {
       const { data: medicationData, error: medicationError } = await supabase
         .from('medication')
@@ -60,16 +63,18 @@
 
       const clinicianName = await fetchClinicianName(prescription.clinician_id);
 
+      // Combine prescription data with fetched details
       return {
         ...prescription,
         medicationName: medicationData.name,
         brandName: medicationData.brand_name,
         strength: medicationData.strength,
-        clinicianName: clinicianName
+        clinicianName: clinicianName 
       };
     })).then(results => results.filter(prescription => prescription !== null));
   });
 </script>
+
 
 <style>
   .container {

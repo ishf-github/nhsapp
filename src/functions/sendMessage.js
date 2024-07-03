@@ -1,14 +1,16 @@
 import { supabase } from '../supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
 
+// Function to send a message
 export async function sendMessage(senderId, receiverId, content, senderType) {
   const messageData = {
-    message_id: uuidv4(),
+    message_id: uuidv4(), 
     content: content,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString(), 
     is_read: false,
   };
 
+  // Assign sender and receiver IDs based on sender type (patient/clinician)
   if (senderType === 'clinician') {
     messageData.sender_clinician_id = senderId;
     messageData.receiver_patient_id = receiverId;
@@ -19,17 +21,16 @@ export async function sendMessage(senderId, receiverId, content, senderType) {
     throw new Error('Invalid sender type');
   }
 
-  console.log('Inserting message data:', messageData);
-
+  // Insert message data into the 'messages' table in Supabase
   const { data, error } = await supabase
     .from('messages')
     .insert([messageData]);
 
+  // Handle errors during insertion
   if (error) {
-    console.error('Error sending message:', error);
     throw error;
+  // Else return inserted data 
   } else {
-    console.log('Message sent:', data);
-    return data;
+    return data; 
   }
 }

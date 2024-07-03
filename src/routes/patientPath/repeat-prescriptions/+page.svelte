@@ -4,6 +4,7 @@
 
   let prescriptions = [];
 
+  //Fetch clinician based on ID
   async function fetchClinicianName(clinicianId) {
     const { data, error } = await supabase
       .from('clinicians')
@@ -15,11 +16,12 @@
       console.error('Error fetching clinician name:', error);
       return 'Unknown Clinician';
     } else {
-      return `${data.first_name} ${data.last_name}`;
+      return `${data.first_name} ${data.last_name}`; 
     }
   }
 
   onMount(async () => {
+    // Fetch long-term prescription data
     const { data, error } = await supabase
       .from('prescriptions')
       .select('medication_id, clinician_id, start_date, end_date, prescription_term, notes')
@@ -30,7 +32,9 @@
       return;
     }
 
+    // Fetch data from prescriptions
     prescriptions = await Promise.all(data.map(async prescription => {
+      // Fetch medication details from medication ID
       const { data: medicationData, error: medicationError } = await supabase
         .from('medication')
         .select('name, brand_name, strength')
@@ -42,8 +46,10 @@
         return null;
       }
 
+      // Fetch clinician name
       const clinicianName = await fetchClinicianName(prescription.clinician_id);
 
+      // Return prescription data
       return {
         ...prescription,
         medicationName: medicationData.name,

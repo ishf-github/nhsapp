@@ -4,6 +4,7 @@
   import { supabase } from '../../../supabaseClient';
   import { goto } from '$app/navigation';
 
+  // Variables for appointment details
   let selectedDate;
   let selectedTime;
   let appointmentType = '';
@@ -14,11 +15,16 @@
   let clinicianId = '';
   let clinicianName = '';
   let notes = '';
+  
+  // Writable store for controlling the visibility of modal
   const showModal = writable(false);
+  
+  // Variables for date range and available time slots
   let minDate;
   let maxDate;
   let timeSlots = [];
 
+  // Function to search for patients based on the query
   async function searchPatients() {
     if (patientQuery.trim() !== '' && patientQuery !== selectedPatientName) {
       const { data, error } = await supabase
@@ -37,6 +43,7 @@
     }
   }
 
+  // Handle patient selection from the dropdown
   function handlePatientSelection(event) {
     const selectedPatientId = event.target.value;
     const selectedPatientData = patients.find(patient => patient.patient_id === selectedPatientId);
@@ -48,6 +55,7 @@
     }
   }
 
+  // Clear patient selection if input field is empty
   function clearPatientSelection() {
     if (patientQuery.trim() === '') {
       selectedPatient = '';
@@ -55,6 +63,7 @@
     }
   }
 
+  // Save appointment details
   async function saveAppointment() {
     if (!selectedDate || !selectedTime || !appointmentType || !selectedPatient || !clinicianId || !clinicianName) {
       console.error('All fields are required');
@@ -73,6 +82,7 @@
       status: 'BOOKED',
     };
 
+    // Check for existing appointments at the same time
     const { data: existingAppointments, error: existingAppointmentsError } = await supabase
       .from('appointments')
       .select('appointment_time')
@@ -84,11 +94,13 @@
       return;
     }
 
+    // Alert if selected time slot is already booked
     if (existingAppointments.some(appointment => appointment.appointment_time === selectedTime)) {
       alert('The selected time slot is already booked.');
       return;
     }
 
+    // Save new appointment
     const { data, error } = await supabase.from('appointments').insert([appointmentData]);
 
     if (error) {
@@ -100,6 +112,7 @@
     }
   }
 
+  // Set the minimum date (today's date) for the appointment
   function getMinDate() {
     const now = new Date();
     const year = now.getFullYear();
@@ -108,6 +121,7 @@
     return `${year}-${month}-${day}`;
   }
 
+  // Set maximum date (3 months from today) for the appointment
   function getMaxDate() {
     const now = new Date();
     now.setMonth(now.getMonth() + 3);
@@ -117,13 +131,14 @@
     return `${year}-${month}-${day}`;
   }
 
+  // Generate available time slots for the selected date
   function generateTimeSlots() {
     const slots = [];
     const now = new Date();
     const start = new Date(now);
-    start.setHours(8, 0, 0, 0);
+    start.setHours(8, 0, 0, 0); 
     const endOfDay = new Date(now);
-    endOfDay.setHours(18, 0, 0, 0);
+    endOfDay.setHours(18, 0, 0, 0); // 
 
     while (start <= endOfDay) {
       if (selectedDate === getMinDate() && start <= now) {
@@ -137,10 +152,13 @@
     return slots;
   }
 
+  // Execute on component mount
   onMount(async () => {
+    // Set minimum and maximum dates for the appointment
     minDate = getMinDate();
     maxDate = getMaxDate();
 
+    // Fetch logged-in clinician's details
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const { data, error } = await supabase
@@ -157,8 +175,10 @@
     }
   });
 
+  // Checks for selectedDate changes to regenerate time slots
   $: selectedDate, selectedDateChanged();
 
+  // Handle changes in selected date
   function selectedDateChanged() {
     timeSlots = generateTimeSlots();
   }
@@ -225,11 +245,6 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     resize: vertical;
-  }
-
-  .patient-select-container {
-    position: relative;
-    width: 100%;
   }
 
   .patient-dropdown {

@@ -12,6 +12,7 @@
   let currentUser = null;
   let recipientName = '';
 
+  // Function to fetch recipient name based on receiverId
   async function fetchRecipientName() {
     const { data, error } = await supabase
       .from('clinicians')
@@ -20,36 +21,28 @@
       .single();
 
     if (error) {
-      console.error('Error fetching recipient name:', error);
       return 'Unknown Clinician';
     } else {
       return `${data.first_name} ${data.last_name}`;
     }
   }
 
+  // Fetch data
   onMount(async () => {
     try {
-      console.log('Fetching session...');
       const { data: { session } } = await supabase.auth.getSession();
-      console.log('Session fetched:', session);
 
       if (session && session.user) {
         currentUser = session.user;
-        console.log('Current user:', currentUser);
-
         
+        // Get receiverId and senderId from URL params
         const params = new URLSearchParams(window.location.search);
         receiverId = params.get('receiverId') || receiverId;
         senderId = params.get('senderId') || currentUser.id;
-        console.log('Fetched receiverId from URL or prop:', receiverId);
-        console.log('Fetched senderId from URL or prop:', senderId);
 
+        // Fetch recipient name and messages
         recipientName = await fetchRecipientName();
-        console.log('Fetched recipient name:', recipientName);
-
-        console.log('Fetching messages...');
         messages = await fetchMessages(senderId, receiverId);
-        console.log('Fetched messages:', messages);
       } else {
         console.error('No user session found.');
       }
@@ -58,22 +51,15 @@
     }
   });
 
+  // Send message function
   async function handleSend() {
     try {
       if (content.trim() !== '') {
         const senderType = 'patient';
-        console.log('Sending message with the following details:');
-        console.log('Sender ID:', senderId);
-        console.log('Receiver ID:', receiverId);
-        console.log('Content:', content);
-        console.log('Sender Type:', senderType);
 
+        // Send message and fetch updated messages
         await sendMessage(senderId, receiverId, content, senderType);
-        console.log('Message sent. Fetching updated messages...');
-
         messages = await fetchMessages(senderId, receiverId);
-        console.log('Fetched updated messages:', messages);
-
         content = ''; 
       } else {
         console.warn('Content is empty. Message not sent.');

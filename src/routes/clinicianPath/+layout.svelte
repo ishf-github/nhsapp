@@ -1,12 +1,15 @@
 <script>
   import { goto } from '$app/navigation'; 
-  import { writable } from 'svelte/store';
-  import { onMount } from 'svelte';
+  import { writable } from 'svelte/store'; 
+  import { onMount } from 'svelte'; 
 
-  let showDropdown = false;
+  let showDropdown = false; 
 
+
+  //Side nav visibility
   const showSideNav = writable(false);
 
+  //Nav and sign out
   function handleButtonClick(action) {
     switch(action) {
       case 'Home': goto('clinicianPath/clinician-home'); break;
@@ -17,9 +20,10 @@
       case 'Prescriptions': goto('/clinicianPath/prescriptions'); break;
       case 'SignOut': goto('/clinician-signin'); break;
     }
-    showDropdown = false;
+    showDropdown = false; 
   }
 
+  // Drop-down functionality
   function toggleDropdown() {
     showDropdown = !showDropdown;
   }
@@ -43,6 +47,7 @@
     };
 
     window.addEventListener('click', handleOutsideClick);
+    
     return () => {
       window.removeEventListener('click', handleOutsideClick);
     };
@@ -54,6 +59,7 @@
     }
   }
 
+  // Go to home page
   function navigateHome() {
     goto('/clinicianPath/clinician-home');
   }

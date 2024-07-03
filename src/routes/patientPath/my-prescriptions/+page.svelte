@@ -7,6 +7,7 @@
   let longTermCount = 0;
   let user = null;
 
+  // Navigation
   const navigateTo = (page) => {
     if (page === 'acute') {
       goto('/patientPath/acute-prescriptions');
@@ -16,15 +17,17 @@
   };
 
   onMount(async () => {
+    // Get patient session
     const { data: { user: fetchedUser }, error } = await supabase.auth.getUser();
     if (error) {
-      console.error('Error fetching user:', error);
+      console.error('Error fetching user:', error); 
       return;
     }
 
     user = fetchedUser;
 
     if (user) {
+      // Fetch patient prescriptions
       const { data: prescriptions, error: fetchError } = await supabase
         .from('prescriptions')
         .select('prescription_term')
@@ -35,6 +38,7 @@
         return;
       }
 
+      // Count the number of short-term and long-term prescriptions
       shortTermCount = prescriptions.filter(p => p.prescription_term === 'short_term').length;
       longTermCount = prescriptions.filter(p => p.prescription_term === 'long_term').length;
     }

@@ -6,42 +6,34 @@
   let email = '';
   let password = '';
 
+  // Handle user login
   const handleLogin = async () => {
-    console.log("Starting login process");
-    console.log("Email:", email);
-    console.log("Password:", password);
-
+    // Sign in user with email and password using Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
-    console.log("Sign-in response data:", data);
-    console.log("Sign-in response error:", error);
-
+    // If user is successfully signed in and session is created
     if (data.user && data.session) {
       const { user } = data;
-      console.log("User signed in:", user);
 
+      // Fetch user data from 'patients' table
       const { data: userData, error: userError } = await supabase
         .from('patients')
         .select('*')
         .eq('patient_id', user.id)
         .single();
-
-      console.log("Fetched userData:", userData);
-      console.log("Fetched userError:", userError);
-
       if (userError && userError.code !== 'PGRST116') {
-        console.error("Error fetching user data:", userError);
-      } else if (!userData) {
+        return null;
+      } 
+      // Insert patient details if no user data found
+      else if (!userData) {
         const {
           firstName, lastName, dateOfBirth, sex, nhsNumber, addressLine1,
           addressLine2, city, postcode, phoneNumber, emergencyContactName,
           emergencyContactNumber
         } = user.user_metadata;
-
-        console.log("User metadata:", user.user_metadata);
 
         const { data: insertData, error: insertError } = await supabase
           .from('patients')
@@ -59,31 +51,24 @@
             patient_id: user.id 
           }]);
 
-        console.log("Insert data:", insertData);
-        console.log("Insert error:", insertError);
-
+        // Return null if insert error
         if (insertError) {
-          console.error('Error inserting patient details:', insertError);
           return null;
-        } else {
-          console.log('Patient details inserted successfully');
         }
       }
 
-      console.log("Redirecting to /patientPath/patient-home");
+      // Redirect to patient homepage
       goto('/patientPath/patient-home');
-    } else {
-      console.log("Sign-in error:", error);
     }
   };
 
+  // Navigate to provider sign-in page
   const navigateToProviderSignIn = () => {
-    console.log("Navigating to clinician sign-in");
     goto('../clinician-signin');
   };
 
+  // Navigate to patient registration page
   const navigateToPatientRegistration = () => {
-    console.log("Navigating to patient registration");
     goto('../patient-registration');
   };
 </script>

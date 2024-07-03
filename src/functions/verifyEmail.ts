@@ -13,7 +13,7 @@ sgMail.setApiKey('YOUR_SENDGRID_API_KEY');
 export default async (req: any, res: any) => {
   const { email } = req.body;
 
-  // Check if the email already exists in the 'providers' table
+  // Check if email already exists in 'clinicians' table
   const { data: existingProvider, error: providerError } = await supabase
     .from('clinicians')
     .select('email')
@@ -28,11 +28,11 @@ export default async (req: any, res: any) => {
     return res.status(409).json({ message: "Email already registered." });
   }
 
-  // Generate a new provider ID and verification code
+  // Generate a new clinician ID and verification code
   const newProviderId = uuidv4();
   const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-  // Insert the new verification entry
+  // Insert new verification entry
   const { data, error } = await supabase
     .from('clinician-verification')
     .insert([{
@@ -60,7 +60,6 @@ export default async (req: any, res: any) => {
     await sgMail.send(msg);
     return res.status(200).json({ message: "Verification email sent successfully!" });
   } catch (error) {
-    console.error('Email sending error:', error);
     if (error instanceof Error) {
       return res.status(500).json({ error: error.message });
     }

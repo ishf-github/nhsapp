@@ -1,138 +1,146 @@
 <script>
-    import { onMount } from 'svelte';
-    import { writable } from 'svelte/store';
-    import { supabase } from '../../../supabaseClient';
-    import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
+  import { supabase } from '../../../supabaseClient';
+  import { goto } from '$app/navigation';
+
+
+  let selectedPatient = '';
+  let selectedPatientName = '';
+  let patientQuery = '';
+  let patients = [];
   
-    let selectedPatient = '';
-    let selectedPatientName = '';
-    let patientQuery = '';
-    let patients = [];
-    
-    let selectedDepartment = '';
-    let departments = [];
-    
-    let selectedClinician = '';
-    let clinicians = [];
-    
-    let notes = '';
-    
-    const showModal = writable(false);
-    let minDate;
+  let selectedDepartment = '';
+  let departments = [];
+  let selectedClinician = '';
+  let clinicians = [];
   
-    async function searchPatients() {
-      if (patientQuery.trim() !== '' && patientQuery !== selectedPatientName) {
-        const { data, error } = await supabase
-          .from('patients')
-          .select('patient_id, first_name, last_name')
-          .or(`first_name.ilike.%${patientQuery}%,last_name.ilike.%${patientQuery}%`);
-    
-        if (error) {
-          console.error('Error searching patients:', error);
-          patients = [];
-        } else {
-          patients = data;
-        }
-      } else {
-        patients = [];
-      }
-    }
+  let notes = '';
   
-    function handlePatientSelection(event) {
-      const selectedPatientId = event.target.value;
-      const selectedPatientData = patients.find(patient => patient.patient_id === selectedPatientId);
-      if (selectedPatientData) {
-        selectedPatientName = `${selectedPatientData.first_name} ${selectedPatientData.last_name}`;
-        patientQuery = selectedPatientName;
-        selectedPatient = selectedPatientId;
-        patients = []; // Clear the patients array to hide the dropdown
-      }
-    }
-  
-    function clearPatientSelection() {
-      if (patientQuery.trim() === '') {
-        selectedPatient = '';
-        selectedPatientName = '';
-      }
-    }
-  
-    async function fetchDepartments() {
+  const showModal = writable(false);
+  let minDate;
+
+  // Patient search
+  async function searchPatients() {
+    if (patientQuery.trim() !== '' && patientQuery !== selectedPatientName) {
       const { data, error } = await supabase
-        .from('department_list')
-        .select('department_name');
-    
+        .from('patients')
+        .select('patient_id, first_name, last_name')
+        .or(`first_name.ilike.%${patientQuery}%,last_name.ilike.%${patientQuery}%`);
+  
       if (error) {
-        console.error('Error fetching departments:', error);
-        departments = [];
+        console.error('Error searching patients:', error);
+        patients = [];
       } else {
-        departments = data;
+        patients = data;
+      }
+    } else {
+      patients = [];
+    }
+  }
+
+  // Select patient from dropdown
+  function handlePatientSelection(event) {
+    const selectedPatientId = event.target.value;
+    const selectedPatientData = patients.find(patient => patient.patient_id === selectedPatientId);
+    if (selectedPatientData) {
+      selectedPatientName = `${selectedPatientData.first_name} ${selectedPatientData.last_name}`;
+      patientQuery = selectedPatientName;
+      selectedPatient = selectedPatientId;
+      patients = [];
+    }
+  }
+
+  // Clear patient selection if input is empty
+  function clearPatientSelection() {
+    if (patientQuery.trim() === '') {
+      selectedPatient = '';
+      selectedPatientName = '';
+    }
+  }
+
+  // Fetch department list
+  async function fetchDepartments() {
+    const { data, error } = await supabase
+      .from('department_list')
+      .select('department_name');
+  
+    if (error) {
+      console.error('Error fetching departments:', error);
+      departments = [];
+    } else {
+      departments = data;
+    }
+  }
+
+  // Fetch clinicians based on department
+  async function fetchClinicians() {
+    if (selectedDepartment) {
+      const { data, error } = await supabase
+        .from('clinicians')
+        .select('clinician_id, first_name, last_name')
+        .eq('department', selectedDepartment);
+  
+      if (error) {
+        console.error('Error fetching clinicians:', error);
+        clinicians = [];
+      } else {
+        clinicians = data;
       }
     }
-  
-    async function fetchClinicians() {
-      if (selectedDepartment) {
-        const { data, error } = await supabase
-          .from('clinicians')
-          .select('clinician_id, first_name, last_name')
-          .eq('department', selectedDepartment);
-    
+  }
+
+  // Save referral
+  async function saveReferral() {
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+
+      if (sessionData && sessionData.session) {
+        const referringClinicianId = sessionData.session.user.id;
+
+        if (!selectedPatient || !selectedDepartment || !selectedClinician) {
+          throw new Error('All fields are required');
+        }
+
+        const referralData = {
+          patient_id: selectedPatient,
+          referring_clinician_id: referringClinicianId,
+          referred_to_clinician_id: selectedClinician,
+          referred_to_department: selectedDepartment,
+          referral_date: new Date().toISOString().split('T')[0],
+          referral_status: 'PENDING',
+          notes
+        };
+
+        const { data, error } = await supabase.from('referrals').insert([referralData]);
+
         if (error) {
-          console.error('Error fetching clinicians:', error);
-          clinicians = [];
+          console.error('Error saving referral:', error);
         } else {
-          clinicians = data;
+          alert('Referral saved successfully');
+          goto('/clinicianPath/referrals');
         }
       }
+    } catch (error) {
+      console.error('Error saving referral:', error);
     }
-  
-    async function saveReferral() {
-      try {
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) throw sessionError;
-  
-        if (sessionData && sessionData.session) {
-          const referringClinicianId = sessionData.session.user.id;
-  
-          if (!selectedPatient || !selectedDepartment || !selectedClinician) {
-            throw new Error('All fields are required');
-          }
-  
-          const referralData = {
-            patient_id: selectedPatient,
-            referring_clinician_id: referringClinicianId,
-            referred_to_clinician_id: selectedClinician,
-            referred_to_department: selectedDepartment,
-            referral_date: new Date().toISOString().split('T')[0],
-            referral_status: 'PENDING',
-            notes
-          };
-  
-          const { data, error } = await supabase.from('referrals').insert([referralData]);
-  
-          if (error) {
-            console.error('Error saving referral:', error);
-          } else {
-            console.log('Referral saved:', data);
-            alert('Referral saved successfully');
-            goto('/clinicianPath/referrals');
-          }
-        }
-      } catch (error) {
-        console.error('Error saving referral:', error);
-      }
-    }
-  
-    onMount(() => {
-      fetchDepartments();
-    });
-  
-    $: if (selectedDepartment) {
-      fetchClinicians();
-    }
-  </script>
+  }
+
+  // Fetch departments on component mount
+  onMount(() => {
+    fetchDepartments();
+  });
+
+  // Fetch clinicians when selected department changes
+  $: if (selectedDepartment) {
+    fetchClinicians();
+  }
+</script>
   
   <style>
     .container {
+      font-family: 'Arial', sans-serif;
       display: flex;
       flex-direction: column;
       max-width: 600px;
@@ -166,11 +174,6 @@
       cursor: pointer;
       width: 100%;
       border-radius: 4px;
-    }
-  
-    .patient-select-container {
-      position: relative;
-      width: 100%;
     }
   
     .patient-dropdown {

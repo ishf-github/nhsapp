@@ -2,27 +2,31 @@
   import { onMount } from 'svelte';
   import { supabase } from '../../../supabaseClient';
   import { writable } from 'svelte/store';
-  import { v4 as uuidv4 } from 'uuid'; // Import UUID library
-  import { goto } from '$app/navigation'; // Import goto for navigation
+  import { v4 as uuidv4 } from 'uuid';
+  import { goto } from '$app/navigation'; 
 
+  
   let selectedDate;
-  let selectedTime;
-  const showModal = writable(false);
-  let clinicians = [];
-  let selectedClinician = '';
-  let reasonForAppointment = '';
-  let minDate;
-  let timeSlots = [];
-  let currentUser = null;
-  let patientName = '';
+  let selectedTime; 
+  const showModal = writable(false); 
+  let clinicians = []; 
+  let selectedClinician = ''; 
+  let reasonForAppointment = ''; 
+  let minDate; 
+  let timeSlots = []; 
+  let currentUser = null; 
+  let patientName = ''; 
+
 
   onMount(async () => {
     try {
+      // Fetch current user session
       const { data: { session } } = await supabase.auth.getSession();
       if (session && session.user) {
         currentUser = session.user;
       }
 
+      // Fetch current user data
       const { data: patientData, error: patientError } = await supabase
         .from('patients')
         .select('first_name, last_name')
@@ -35,6 +39,7 @@
         patientName = `${patientData.first_name} ${patientData.last_name}`;
       }
 
+      // Fetch clinicians data
       const { data, error } = await supabase
         .from('clinicians')
         .select('clinician_id, first_name, last_name')
@@ -46,15 +51,15 @@
         console.warn('No clinicians found. Make sure the table is populated.');
       } else {
         clinicians = data;
-        console.log('Fetched clinicians:', clinicians);
       }
     } catch (err) {
       console.error('Error fetching data:', err.message);
     }
 
-    minDate = getMinDate();
+    minDate = getMinDate(); // Set min date
   });
 
+  // Get min date (today's date)
   function getMinDate() {
     const now = new Date();
     const year = now.getFullYear();
@@ -63,6 +68,7 @@
     return `${year}-${month}-${day}`;
   }
 
+  // Set time slots
   function generateTimeSlots() {
     const slots = [];
     const now = new Date();
@@ -84,10 +90,12 @@
     return slots;
   }
 
+  // Generate time slots for given date
   $: if (selectedDate) {
     timeSlots = generateTimeSlots();
   }
 
+  // Save appointment
   async function saveAppointment() {
     const clinician = clinicians.find(clin => `${clin.first_name} ${clin.last_name}` === selectedClinician);
 
@@ -96,6 +104,7 @@
       return;
     }
 
+    // Create new appointment
     const newAppointment = {
       appointment_id: uuidv4(),
       clinician_name: `${clinician.first_name} ${clinician.last_name}`,
@@ -110,6 +119,7 @@
     };
 
     try {
+      // Insert new appointment into database
       const { error } = await supabase
         .from('appointments')
         .insert([newAppointment]);
@@ -117,7 +127,6 @@
       if (error) {
         console.error('Error saving appointment:', error.message, error.hint, error.details);
       } else {
-        console.log('Appointment saved:', newAppointment);
         alert('Appointment Booked');
         goto('/patientPath/my-appointments');
       }
@@ -126,6 +135,7 @@
     }
   }
 </script>
+
 
 <style>
   .container {

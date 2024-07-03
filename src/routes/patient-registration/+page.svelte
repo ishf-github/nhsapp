@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation'; 
   import { supabase } from '../../supabaseClient';
 
+  // Form fields for user registration
   let firstName = '';
   let lastName = '';
   let dateOfBirth = '';
@@ -19,12 +20,15 @@
   let confirmPassword = '';
   let errorMessage = '';
 
+  // Handle user registration
   const handleRegistration = async () => {
+    // Check if passwords match
     if (password !== confirmPassword) {
       errorMessage = "Passwords do not match";
       return;
     }
     
+    // Supabase auth user sign-up
     const { data, error } = await supabase.auth.signUp(
       {
         email: email,
@@ -46,15 +50,15 @@
       }
     );
 
+    // Handle errors or navigate to sign-in on success
     if (error) {
-      console.log("Error:", error);
       errorMessage = error.message;
     } else {
-      console.log("Registration successful:", data);
       navigateToSignIn();
     }
   };
 
+  // Insert patient details into database
   const insertPatientDetails = async (user) => {
     const { data, error } = await supabase
       .from('patients')
@@ -70,17 +74,16 @@
           emergency_contact_name: emergencyContactName,
           emergency_contact_phone: emergencyContactNumber,
           sex: sex,
-          patient_id: user.id  // Use patient_id instead of user_id
+          patient_id: user.id
         }
       ]);
 
     if (error) {
-      console.error('Error inserting patient details:', error);
-    } else {
-      console.log('Patient details inserted:', data);
+      errorMessage = 'Error inserting patient details: ' + error.message;
     }
   };
 
+  // Insert patient details after email confirmation
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) {
       const user = session.user;
@@ -90,6 +93,7 @@
     }
   });
 
+  // Navigate to patient sign-in
   const navigateToSignIn = () => {
     goto('../patient-signin');
   };

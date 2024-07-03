@@ -1,35 +1,40 @@
 import nodemailer from 'nodemailer';
 import { json } from '@sveltejs/kit';
 
+// Configure email transporter
 const transporter = nodemailer.createTransport({
   host: 'localhost',
   port: 1025,
-  secure: false, // true for 465, false for other ports
+  secure: false, 
   auth: {
-    user: '', // leave empty for MailHog
-    pass: ''  // leave empty for MailHog
+    user: '', 
+    pass: ''  
   }
 });
 
 /**
+ * POST handler to send emails using Nodemailer
  * @type {import('@sveltejs/kit').RequestHandler}
  */
 export async function POST({ request }) {
+  // Parse the request body to get email details
   const { to, subject, text, html } = await request.json();
 
+  // Email options
   const mailOptions = {
-    from: '"MyNHS" <noreply@mynhs.com>', // sender address
-    to, // list of receivers
-    subject, // Subject line
-    text, // plain text body
-    html // html body
+    from: '"MyNHS" <noreply@mynhs.com>', 
+    to, 
+    subject, 
+    text, 
+    html 
   };
 
+  // Try to send the email using the transporter
   try {
     await transporter.sendMail(mailOptions);
     return json({ success: true });
   } catch (error) {
-    console.error('Error sending email:', error);
+    // Handle errors if the email could not be sent
     return json({ error: 'Error sending email' }, { status: 500 });
   }
 }

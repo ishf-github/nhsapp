@@ -8,6 +8,7 @@
 
   const showSideNav = writable(false);
 
+  //Navigation
   function handleButtonClick(action) {
     switch(action) {
       case 'Home': goto('/'); break;
@@ -20,6 +21,7 @@
     showDropdown = false;
   }
 
+  // Drop-down functionality
   function toggleDropdown() {
     showDropdown = !showDropdown;
   }

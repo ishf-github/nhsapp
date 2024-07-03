@@ -7,8 +7,10 @@
   let currentUser = null;
   let noAppointments = false;
 
+  // Fetch appointments
   async function fetchAppointments() {
     try {
+      // Get user session
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         console.error('Error getting session:', error.message);
@@ -44,6 +46,7 @@
       } else if (appointmentsData.length === 0) {
         noAppointments = true;
       } else {
+        // Map fetched data
         appointments = appointmentsData.map(appt => ({
           id: appt.appointment_id,
           date: appt.appointment_date,
@@ -60,15 +63,18 @@
     }
   }
 
+  // View appointment details
   function viewAppointment(appt) {
     const url = `/appointment-details?appointmentId=${appt.id}`;
     window.open(url, '_blank', 'width=600,height=400');
   }
 
+  // Join call
   function joinVideoCall() {
     window.open('/video-call', '_blank', 'width=1120,height=700,noopener,noreferrer');
   }
 
+  // Join call enable check (15 mins before appointment time)
   function isJoinCallEnabled(appointmentDate, appointmentTime) {
     const now = new Date();
     const appointmentDateTime = new Date(`${appointmentDate}T${appointmentTime}`);

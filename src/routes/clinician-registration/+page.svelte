@@ -3,6 +3,7 @@
   import { supabase } from '../../supabaseClient';
   import { onMount } from 'svelte';
 
+  // Declare variables for user input fields
   let firstName = '';
   let surname = '';
   let dateOfBirth = '';
@@ -18,14 +19,18 @@
   let confirmPassword = '';
   let errorMessage = '';
 
+  // Department list variable
   let departments = [];
 
+  // Function to handle user registration
   const handleRegistration = async () => {
+    // Check if passwords match
     if (password !== confirmPassword) {
       errorMessage = "Passwords do not match";
       return;
     }
 
+    // Sign up the user using Supabase auth
     const { data, error } = await supabase.auth.signUp(
       {
         email: email,
@@ -48,33 +53,33 @@
       }
     );
 
+    // Handle errors or navigate to sign-in on success
     if (error) {
-      console.log("Error:", error);
       errorMessage = error.message;
     } else {
-      console.log("Registration successful:", data);
       navigateToSignIn();
     }
   };
 
+  // Sign-in navigation function
   const navigateToSignIn = () => {
     goto('../clinician-signin');
   };
 
+  // Fetch list of departments on component mount
   onMount(async () => {
     const { data: departmentData, error } = await supabase
       .from('department_list')
       .select('department_name');
     
-    if (error) {
-      console.log("Error fetching departments:", error);
-    } else {
+    if (!error) {
       departments = departmentData;
     }
   });
 </script>
 
 <style>
+  /* Page styling */
   .registration-container {
     font-family: 'Frutiger W01', sans-serif;
     display: flex;

@@ -2,10 +2,12 @@
   import { onMount } from 'svelte';
   import { supabase } from '../../../supabaseClient'; 
 
+ 
   let medications = [];
   let showModal = false;
   let selectedMedication = {};
 
+  // Fetch medications from database
   async function fetchMedications() {
     let { data, error } = await supabase
       .from('medication')
@@ -18,18 +20,21 @@
     }
   }
 
+  // Select medication
   function selectMedication(medicationId) {
-    selectedMedication = medications.find(med => med.medication_id === medicationId);
-    showModal = true;
+    selectedMedication = medications.find(med => med.medication_id === medicationId); 
+    showModal = true; // Show the modal
   }
 
+  // Fetch medications when the component mounts
   onMount(() => {
     fetchMedications();
   });
 
+  // Close modal
   function closeModal() {
-    showModal = false;
-    selectedMedication = {};
+    showModal = false; 
+    selectedMedication = {}; 
   }
 </script>
 

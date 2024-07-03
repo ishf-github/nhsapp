@@ -3,22 +3,22 @@
   import { supabase } from '../../../supabaseClient';
   import { goto } from '$app/navigation';
 
+  // State variables
   let searchQuery = '';
   let messages = [];
   let currentUser = null;
   let inboxEmpty = false;
 
+  // Fetch message
   async function fetchMessages() {
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
-        console.error('Error getting session:', error.message);
         return;
       }
 
       currentUser = session?.user;
       if (!currentUser) {
-        console.error('User not authenticated');
         return;
       }
 
@@ -29,7 +29,7 @@
         .order('timestamp', { ascending: false });
 
       if (fetchError) {
-        console.error('Error fetching messages:', fetchError.message, fetchError.details);
+        return;
       } else if (data.length === 0) {
         inboxEmpty = true;
       } else {
@@ -58,7 +58,7 @@
           .in('patient_id', Array.from(patientIds));
 
         if (patientsError) {
-          console.error('Error fetching patients:', patientsError.message, patientsError.details);
+          return;
         } else {
           const patientMap = new Map();
           for (const patient of patientsData) {
@@ -76,10 +76,10 @@
         }
       }
     } catch (err) {
-      console.error('Unexpected error fetching messages:', err);
     }
   }
 
+  // Open messages
   function openMessageWindow(message) {
     let receiverId;
     if (message.sender_clinician_id === currentUser.id || message.sender_patient_id === currentUser.id) {
@@ -87,11 +87,11 @@
     } else {
       receiverId = message.sender_clinician_id || message.sender_patient_id;
     }
-    console.log('Opening message window with receiverId:', receiverId);
     const url = `/message-patient?receiverId=${receiverId}`;
     window.open(url, '_blank', 'width=600,height=400');
   }
 
+  // Navigation
   function navigateTo(page) {
     if (page === 'notes') {
       goto('../notes');
@@ -100,6 +100,7 @@
     }
   }
 
+  // Fetch messages on component mount
   onMount(() => {
     fetchMessages();
   });
@@ -124,7 +125,7 @@
     line-height: 1.6;
   }
 
-  .send-message-button, .new-message-button {
+  .send-message-button {
     padding: 0px 12px;
     font-family: 'Frutiger', sans-serif;
     font-weight: normal;
@@ -142,25 +143,6 @@
   .message-list {
     overflow-y: auto;
     flex-grow: 1;
-  }
-
-  .icon-round {
-    position: fixed;
-    bottom: 64px;
-    right: 20px;
-    z-index: 30;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-    background-color: #005EB8;
-    color: white;
-    font-family: 'Frutiger', sans-serif;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
   }
 
   .inbox-empty {

@@ -1,11 +1,12 @@
 <script>
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
+  import { goto } from '$app/navigation'; 
   import { supabase } from '../../../supabaseClient';
 
   let patients = [];
   let currentUser = null;
 
+  // Fetch patients and current user data when component mounts
   onMount(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -13,6 +14,7 @@
         currentUser = session.user;
       }
 
+      // Fetch patient data
       const { data, error } = await supabase
         .from('patients')
         .select('patient_id, first_name, last_name, date_of_birth, sex, nhs_number');
@@ -23,13 +25,13 @@
         console.warn('No patients found. Make sure the table is populated.');
       } else {
         patients = data;
-        console.log('Fetched patients:', patients);
       }
     } catch (err) {
       console.error('Error fetching data:', err.message);
     }
   });
 
+  // Navigation
   function handleAction(button, patient) {
     if (button === 'View Record') {
       goto(`/clinicianPath/patient-chart?patientId=${patient.patient_id}`);
@@ -92,22 +94,6 @@
     border-radius: 4px;
   }
 
-  .icon-round {
-    position: fixed;
-    bottom: 64px; 
-    right: 20px; 
-    z-index: 30; 
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    background-color: #fff; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-  }
 </style>
 
 <div class="patients-page">

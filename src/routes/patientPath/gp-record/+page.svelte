@@ -23,12 +23,14 @@
 
   onMount(async () => {
     try {
+      // Fetch patient session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) throw sessionError;
+      if (sessionError) throw sessionError; 
       
       if (session && session.user) {
         const patientId = session.user.id;
 
+        // Fetch patient data
         const { data: patientData, error: patientError } = await supabase
           .from('patients')
           .select('first_name, last_name, date_of_birth, nhs_number, address, phone_number, email, emergency_contact_name, emergency_contact_phone')
@@ -37,6 +39,7 @@
         if (patientError) throw patientError;
         patient = patientData;
 
+        // Fetch patient appointments count
         const { data: appointmentsData, error: appointmentsError } = await supabase
           .from('appointments')
           .select('appointment_id', { count: 'exact' })
@@ -44,6 +47,7 @@
         if (appointmentsError) throw appointmentsError;
         counts.appointments = appointmentsData.length;
 
+        // Fetch patient referrals count
         const { data: referralsData, error: referralsError } = await supabase
           .from('referrals')
           .select('referral_id', { count: 'exact' })
@@ -51,12 +55,13 @@
         if (referralsError) throw referralsError;
         counts.referrals = referralsData.length;
 
+        // Fetch patient prescriptions count
         const { data: prescriptionsData, error: prescriptionsError } = await supabase
           .from('prescriptions')
           .select('prescription_id', { count: 'exact' })
           .eq('patient_id', patientId);
         if (prescriptionsError) throw prescriptionsError;
-        counts.prescriptions = prescriptionsData.length;
+        counts.prescriptions = prescriptionsData.length; 
       }
     } catch (error) {
       console.error('Error fetching data:', error);

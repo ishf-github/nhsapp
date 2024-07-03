@@ -1,173 +1,185 @@
 <script>
-    import { onMount } from 'svelte';
-    import { writable } from 'svelte/store';
-    import { supabase } from '../../../supabaseClient';
-  
-    let patientQuery = '';
-    let medicationQuery = '';
-    let patients = [];
-    let medications = [];
-    let selectedPatient = '';
-    let selectedPatientName = '';
-    let selectedMedication = '';
-    let selectedMedicationName = '';
-    let startDate = '';
-    let endDate = '';
-    let notes = '';
-    let clinicianId = '';
-    const showModal = writable(false);
-    let minDate;
-    let maxDate;
-  
-    async function searchPatients() {
-      if (patientQuery.trim() !== '' && patientQuery !== selectedPatientName) {
-        const { data, error } = await supabase
-          .from('patients')
-          .select('patient_id, first_name, last_name')
-          .or(`first_name.ilike.%${patientQuery}%,last_name.ilike.%${patientQuery}%`);
-  
-        if (error) {
-          console.error('Error searching patients:', error);
-          patients = [];
-        } else {
-          patients = data;
-        }
-      } else {
-        patients = [];
-      }
-    }
-  
-    async function searchMedications() {
-      if (medicationQuery.trim() !== '' && medicationQuery !== selectedMedicationName) {
-        const { data, error } = await supabase
-          .from('medication')
-          .select('medication_id, name')
-          .ilike('name', `%${medicationQuery}%`);
-  
-        if (error) {
-          console.error('Error searching medications:', error);
-          medications = [];
-        } else {
-          medications = data;
-        }
-      } else {
-        medications = [];
-      }
-    }
-  
-    function handlePatientSelection(event) {
-      const selectedPatientId = event.target.value;
-      const selectedPatientData = patients.find(patient => patient.patient_id === selectedPatientId);
-      if (selectedPatientData) {
-        selectedPatientName = `${selectedPatientData.first_name} ${selectedPatientData.last_name}`;
-        patientQuery = selectedPatientName;
-        selectedPatient = selectedPatientId;
-        patients = []; // Clear the patients array to hide the dropdown
-      }
-    }
-  
-    function handleMedicationSelection(event) {
-      const selectedMedicationId = event.target.value;
-      const selectedMedicationData = medications.find(medication => medication.medication_id === selectedMedicationId);
-      if (selectedMedicationData) {
-        selectedMedicationName = selectedMedicationData.name;
-        medicationQuery = selectedMedicationName;
-        selectedMedication = selectedMedicationId;
-        medications = []; // Clear the medications array to hide the dropdown
-      }
-    }
-  
-    function clearPatientSelection() {
-      if (patientQuery.trim() === '') {
-        selectedPatient = '';
-        selectedPatientName = '';
-      }
-    }
-  
-    function clearMedicationSelection() {
-      if (medicationQuery.trim() === '') {
-        selectedMedication = '';
-        selectedMedicationName = '';
-      }
-    }
-  
-    async function savePrescription() {
-      if (!selectedPatient || !selectedMedication || !startDate || !endDate || !clinicianId) {
-        console.error('All fields are required');
-        return;
-      }
-  
-      const prescriptionTerm = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) <= 42 ? 'short_term' : 'long_term';
-  
-      const prescriptionData = {
-        clinician_id: clinicianId,
-        patient_id: selectedPatient,
-        medication_id: selectedMedication,
-        start_date: startDate,
-        end_date: endDate,
-        notes,
-        prescription_term: prescriptionTerm,
-      };
-  
-      const { data, error } = await supabase.from('prescriptions').insert([prescriptionData]);
-  
+  import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
+  import { supabase } from '../../../supabaseClient';
+
+  let patientQuery = '';
+  let medicationQuery = '';
+  let patients = [];
+  let medications = [];
+  let selectedPatient = '';
+  let selectedPatientName = '';
+  let selectedMedication = '';
+  let selectedMedicationName = '';
+  let startDate = '';
+  let endDate = '';
+  let notes = '';
+  let clinicianId = '';
+  const showModal = writable(false);
+  let minDate;
+  let maxDate;
+
+  // Search for patients
+  async function searchPatients() {
+    if (patientQuery.trim() !== '' && patientQuery !== selectedPatientName) {
+      const { data, error } = await supabase
+        .from('patients')
+        .select('patient_id, first_name, last_name')
+        .or(`first_name.ilike.%${patientQuery}%,last_name.ilike.%${patientQuery}%`);
+
       if (error) {
-        console.error('Error saving prescription:', error);
+        console.error('Error searching patients:', error);
+        patients = [];
       } else {
-        console.log('Prescription saved:', data);
-        alert('Prescription saved successfully');
+        patients = data;
+      }
+    } else {
+      patients = [];
+    }
+  }
+
+  // Search for medication
+  async function searchMedications() {
+    if (medicationQuery.trim() !== '' && medicationQuery !== selectedMedicationName) {
+      const { data, error } = await supabase
+        .from('medication')
+        .select('medication_id, name')
+        .ilike('name', `%${medicationQuery}%`);
+
+      if (error) {
+        console.error('Error searching medications:', error);
+        medications = [];
+      } else {
+        medications = data;
+      }
+    } else {
+      medications = [];
+    }
+  }
+
+  // Select patient from dropdown
+  function handlePatientSelection(event) {
+    const selectedPatientId = event.target.value;
+    const selectedPatientData = patients.find(patient => patient.patient_id === selectedPatientId);
+    if (selectedPatientData) {
+      selectedPatientName = `${selectedPatientData.first_name} ${selectedPatientData.last_name}`;
+      patientQuery = selectedPatientName;
+      selectedPatient = selectedPatientId;
+      patients = [];
+    }
+  }
+
+  // Select medication from dropdown
+  function handleMedicationSelection(event) {
+    const selectedMedicationId = event.target.value;
+    const selectedMedicationData = medications.find(medication => medication.medication_id === selectedMedicationId);
+    if (selectedMedicationData) {
+      selectedMedicationName = selectedMedicationData.name;
+      medicationQuery = selectedMedicationName;
+      selectedMedication = selectedMedicationId;
+      medications = [];
+    }
+  }
+
+  // Clear patient selection if input is empty
+  function clearPatientSelection() {
+    if (patientQuery.trim() === '') {
+      selectedPatient = '';
+      selectedPatientName = '';
+    }
+  }
+
+  // Clear medication selection if input is empty
+  function clearMedicationSelection() {
+    if (medicationQuery.trim() === '') {
+      selectedMedication = '';
+      selectedMedicationName = '';
+    }
+  }
+
+  // Save prescription
+  async function savePrescription() {
+    if (!selectedPatient || !selectedMedication || !startDate || !endDate || !clinicianId) {
+      console.error('All fields are required');
+      return;
+    }
+
+    //Set prescription to short-term or long-term
+    const prescriptionTerm = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24) <= 42 ? 'short_term' : 'long_term';
+
+    const prescriptionData = {
+      clinician_id: clinicianId,
+      patient_id: selectedPatient,
+      medication_id: selectedMedication,
+      start_date: startDate,
+      end_date: endDate,
+      notes,
+      prescription_term: prescriptionTerm,
+    };
+
+    const { data, error } = await supabase.from('prescriptions').insert([prescriptionData]);
+
+    if (error) {
+      console.error('Error saving prescription:', error);
+    } else {
+      alert('Prescription saved successfully');
+    }
+  }
+
+  // Set minimum date to today
+  function getMinDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // 3 Month maximum date
+  function getMaxDate() {
+    const now = new Date();
+    now.setMonth(now.getMonth() + 3);
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // Weekend check
+  function isWeekend(date) {
+    const day = new Date(date).getDay();
+    return day === 0 || day === 6; // Sunday = 0, Saturday = 6
+  }
+
+  // Validate date input and prevent selection of weekends
+  function validateDateInput(event) {
+    const date = event.target.value;
+    if (isWeekend(date)) {
+      alert('Start Date and End Date cannot be a weekend.');
+      event.target.value = '';
+    }
+  }
+
+  // Fetch initial data and set up component when it mounts
+  onMount(async () => {
+    minDate = getMinDate();
+    maxDate = getMaxDate();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data, error } = await supabase
+        .from('clinicians')
+        .select('clinician_id, first_name, last_name')
+        .eq('clinician_id', user.id)
+        .single();
+      if (error) {
+        console.error('Error fetching clinician details:', error);
+      } else {
+        clinicianId = data.clinician_id;
       }
     }
-  
-    function getMinDate() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-  
-    function getMaxDate() {
-      const now = new Date();
-      now.setMonth(now.getMonth() + 3); // Set date to 3 months from now
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-  
-    function isWeekend(date) {
-      const day = new Date(date).getDay();
-      return day === 0 || day === 6; // Sunday = 0, Saturday = 6
-    }
-  
-    function validateDateInput(event) {
-      const date = event.target.value;
-      if (isWeekend(date)) {
-        alert('Start Date and End Date cannot be a weekend.');
-        event.target.value = ''; // Clear invalid date
-      }
-    }
-  
-    onMount(async () => {
-      minDate = getMinDate();
-      maxDate = getMaxDate();
-  
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase
-          .from('clinicians')
-          .select('clinician_id, first_name, last_name')
-          .eq('clinician_id', user.id)
-          .single();
-        if (error) {
-          console.error('Error fetching clinician details:', error);
-        } else {
-          clinicianId = data.clinician_id;
-        }
-      }
-    });
-  </script>
+  });
+</script>
   
   <style>
     .container {
@@ -223,11 +235,6 @@
       box-sizing: border-box;
     }
   
-    .patient-select-container, .medication-select-container {
-      position: relative;
-      width: 100%;
-    }
-  
     .patient-dropdown, .medication-dropdown {
       position: absolute;
       top: 100%;
@@ -235,7 +242,7 @@
       width: 100%;
       background-color: white;
       border: 1px solid #ccc;
-      max-height: calc(3rem * 6); /* Max height for 5 entries + 1 for "Select an item" */
+      max-height: calc(3rem * 6);
       overflow-y: auto;
       z-index: 1000;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
