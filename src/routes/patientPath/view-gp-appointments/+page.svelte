@@ -28,6 +28,7 @@
           appointment_id,
           appointment_date,
           appointment_time,
+          appointment_type,
           clinician_name,
           patients (
             patient_id,
@@ -47,6 +48,7 @@
           id: appt.appointment_id,
           date: appt.appointment_date,
           time: appt.appointment_time.slice(0, 5),
+          type: appt.appointment_type,
           clinicianName: appt.clinician_name,
           patientName: `${appt.patients.first_name} ${appt.patients.last_name}`
         }));
@@ -61,6 +63,17 @@
   function viewAppointment(appt) {
     const url = `/appointment-details?appointmentId=${appt.id}`;
     window.open(url, '_blank', 'width=600,height=400');
+  }
+
+  function joinVideoCall() {
+    window.open('/video-call', '_blank', 'width=1120,height=700,noopener,noreferrer');
+  }
+
+  function isJoinCallEnabled(appointmentDate, appointmentTime) {
+    const now = new Date();
+    const appointmentDateTime = new Date(`${appointmentDate}T${appointmentTime}`);
+    const diffMinutes = (appointmentDateTime - now) / (1000 * 60);
+    return diffMinutes <= 15 && diffMinutes > 0;
   }
 
   onMount(() => {
@@ -131,6 +144,19 @@
     cursor: pointer;
   }
 
+  .cta-button {
+    padding: 6px 12px;
+    font-family: 'Frutiger', sans-serif;
+    font-weight: normal;
+    background-color: #005EB8;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+    border-radius: 4px;
+    text-transform: capitalize;
+  }
+
   .bold-text {
     font-weight: bold;
   }
@@ -142,10 +168,14 @@
     <div class="appointments-empty">No appointments found</div>
   {:else}
     {#each appointments as appt (appt.id)}
-      <div class="appointment-card" on:click={() => viewAppointment(appt)}>
+      <div class="appointment-card">
         <div class="appointment-date">{new Date(appt.date).toLocaleDateString()}</div>
         <div class="appointment-info"><span class="bold-text">Time:</span> {appt.time}</div>
         <div class="appointment-info"><span class="bold-text">Clinician:</span> {appt.clinicianName}</div>
+        <div class="appointment-info"><span class="bold-text">Type:</span> {appt.type}</div>
+        {#if appt.type === 'Video Call' && isJoinCallEnabled(appt.date, appt.time)}
+          <button class="cta-button" on:click={joinVideoCall}>Join Call</button>
+        {/if}
       </div>
     {/each}
   {/if}

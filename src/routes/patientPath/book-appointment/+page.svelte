@@ -104,7 +104,7 @@
       patient_name: patientName,
       appointment_date: selectedDate,
       appointment_time: selectedTime,
-      appointment_type: 'in_person',
+      appointment_type: 'In-Person Appointment',
       notes: reasonForAppointment,
       status: 'BOOKED'
     };

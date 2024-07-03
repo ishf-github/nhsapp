@@ -3,6 +3,7 @@
   import { supabase } from '../../../supabaseClient';
 
   let prescriptions = [];
+  let currentUser = null;
 
   async function fetchClinicianName(clinicianId) {
     const { data, error } = await supabase
@@ -20,10 +21,25 @@
   }
 
   onMount(async () => {
+    // Fetch the current user's session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error('Error getting session:', sessionError.message);
+      return;
+    }
+
+    currentUser = session?.user;
+    if (!currentUser) {
+      console.error('User not authenticated');
+      return;
+    }
+
+    // Fetch prescriptions for the current user with prescription_term 'short_term'
     const { data, error } = await supabase
       .from('prescriptions')
       .select('medication_id, clinician_id, start_date, end_date, prescription_term, notes')
-      .eq('prescription_term', 'short_term');
+      .eq('prescription_term', 'short_term')
+      .eq('patient_id', currentUser.id);
 
     if (error) {
       console.error('Error fetching prescriptions:', error);

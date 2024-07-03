@@ -104,7 +104,7 @@
       patient_name: patientName,
       appointment_date: selectedDate,
       appointment_time: selectedTime,
-      appointment_type: 'video_call',
+      appointment_type: 'Video Call',
       notes: reasonForAppointment,
       status: 'BOOKED'
     };

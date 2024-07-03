@@ -44,7 +44,7 @@
       selectedPatientName = `${selectedPatientData.first_name} ${selectedPatientData.last_name}`;
       patientQuery = selectedPatientName;
       selectedPatient = selectedPatientId;
-      patients = []; // Clear the patients array to hide the dropdown
+      patients = [];
     }
   }
 
@@ -239,7 +239,7 @@
     width: 100%;
     background-color: white;
     border: 1px solid #ccc;
-    max-height: calc(3rem * 6); /* Max height for 5 entries + 1 for "Select a patient" */
+    max-height: calc(3rem * 6); 
     overflow-y: auto;
     z-index: 1000;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -306,7 +306,7 @@
       <option value="">Select appointment type</option>
       <option value="Video Call">Video Call</option>
       <option value="Phone Call">Phone Call</option>
-      <option value="In-person Appointment">In-person Appointment</option>
+      <option value="In-Person Appointment">In-Person Appointment</option>
     </select>
   </div>
 

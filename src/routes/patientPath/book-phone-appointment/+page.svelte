@@ -104,7 +104,7 @@
       patient_name: patientName,
       appointment_date: selectedDate,
       appointment_time: selectedTime,
-      appointment_type: 'phone_call',
+      appointment_type: 'Phone Call',
       notes: reasonForAppointment,
       status: 'BOOKED'
     };

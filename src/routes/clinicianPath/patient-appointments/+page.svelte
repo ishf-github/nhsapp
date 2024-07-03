@@ -19,6 +19,7 @@
           appointment_id,
           appointment_date,
           appointment_time,
+          appointment_type,
           status,
           patient_id,
           patients (
@@ -42,6 +43,7 @@
           nhsNumber: appt.patients?.nhs_number || 'Unknown',
           nextAppt: appt.appointment_date,
           time: appt.appointment_time,
+          appointmentType: appt.appointment_type,
           status: appt.status
         }));
       }
@@ -63,10 +65,23 @@
     }
   }
 
-  function viewTasks(id) { /* ... */ }
+  function joinCall(appointment) {
+    const url = `/video-call`;
+    window.open(url, '_blank', 'width=1120,height=700,noopener,noreferrer');
+  }
 
   function navigateTo(page) {
     goto(page);
+  }
+
+  function isJoinable(appointment) {
+    if (appointment.appointmentType !== 'Video Call') {
+      return false;
+    }
+    const appointmentDateTime = new Date(`${appointment.nextAppt}T${appointment.time}`);
+    const now = new Date();
+    const diff = (appointmentDateTime - now) / (1000 * 60); // difference in minutes
+    return diff <= 15 && diff >= 0;
   }
 </script>
 
@@ -152,11 +167,15 @@
           <p>DoB: {appointment.dob}</p>
           <p>NHS Number: {appointment.nhsNumber}</p>
           <p>Next Appt: {appointment.nextAppt} {appointment.time}</p>
+          <p>Type: {appointment.appointmentType}</p>
         </div>
       </div>
       <div class="appointment-actions">
         <button class="cta-button" on:click={() => viewRecord(appointment.patientId)}>View Record</button>
         <button class="cta-button" on:click={() => sendMessage(appointment.patientId)}>Send Message</button>
+        {#if isJoinable(appointment)}
+          <button class="cta-button" on:click={() => joinCall(appointment)}>Join Call</button>
+        {/if}
       </div>
     </div>
   {/each}

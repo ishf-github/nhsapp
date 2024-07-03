@@ -154,18 +154,18 @@
     }
   
     .button {
-      background-color: #f0f0f0;
-      border: 1px solid #ccc;
-      color: black;
+      background-color: #005EB8;
+      color: white;
       padding: 1rem 2rem;
       text-align: center;
       text-decoration: none;
       display: inline-block;
+      font-family: 'Frutiger', sans-serif;
       font-size: 16px;
       margin: 4px 2px;
       cursor: pointer;
-      border-radius: 4px;
       width: 100%;
+      border-radius: 4px;
     }
   
     .patient-select-container {
@@ -180,7 +180,7 @@
       width: 100%;
       background-color: white;
       border: 1px solid #ccc;
-      max-height: calc(3rem * 6); /* Max height for 5 entries + 1 for "Select a patient" */
+      max-height: calc(3rem * 6); 
       overflow-y: auto;
       z-index: 1000;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
